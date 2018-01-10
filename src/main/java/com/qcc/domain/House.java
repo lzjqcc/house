@@ -2,37 +2,39 @@ package com.qcc.domain;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "tb_house")
-public class House {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class House extends BaseEntity{
     private BigDecimal price;
     //房屋描述
     @Lob
     @Column(columnDefinition="TEXT")
     private String description;
-    private Date updateTime;
-    private Date createTime;
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String address;
     //几室几厅
     private String room;
     // 是否整租
     private Boolean hire;
     // 装修
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String decoration;
     // 付款方式
     private String payMent;
     // 房屋面积
     private Integer area;
     // 小区周边
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String surrounding;
     // 配置信息
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String configInfo;
     // 每个房间面积
     private Integer roomArea;
@@ -40,18 +42,19 @@ public class House {
     private String direction;
     private String status;
     //特色
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String characteristic;
     // 租客信息
-    private Account account;
-    private Set<Image> set = new HashSet<Image>();
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
+    @JoinColumn(name = "tenant_id")
+    private Set<Tenant> tenants = new HashSet<Tenant>();
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = Image.class)
+    @JoinColumn(name = "image_id")
+    private Set<Image> images = new HashSet<Image>();
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = HouseLog.class)
+    @JoinColumn(name = "houselog_id")
     private Set<HouseLog> houseLogs = new HashSet<HouseLog>();
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public BigDecimal getPrice() {
         return price;
@@ -67,22 +70,6 @@ public class House {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public String getAddress() {
@@ -181,19 +168,27 @@ public class House {
         this.characteristic = characteristic;
     }
 
-    public Account getAccount() {
-        return account;
+    public Set<Tenant> getTenants() {
+        return tenants;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setTenants(Set<Tenant> tenants) {
+        this.tenants = tenants;
     }
 
-    public Set<Image> getSet() {
-        return set;
+    public Set<HouseLog> getHouseLogs() {
+        return houseLogs;
     }
 
-    public void setSet(Set<Image> set) {
-        this.set = set;
+    public void setHouseLogs(Set<HouseLog> houseLogs) {
+        this.houseLogs = houseLogs;
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 }
