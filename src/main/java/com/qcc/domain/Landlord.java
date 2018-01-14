@@ -12,16 +12,9 @@ public class Landlord extends BaseEntity{
     // 登陆信息
     @OneToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
     private Account account;
-    @OneToMany
+    @OneToMany(targetEntity =House.class,mappedBy = "landlord")
     private Set<House> houses = new HashSet<House>();
-    private String name;
-    private String job;
-    private String mobile;
-    private Boolean gender;
-    private Integer age;
-    @Lob
-    @Column(columnDefinition="TEXT")
-    private String description;
+
     // 租客
     @ManyToMany
     private Set<Tenant> tenants = new HashSet<Tenant>();
@@ -40,54 +33,6 @@ public class Landlord extends BaseEntity{
 
     public void setHouses(Set<House> houses) {
         this.houses = houses;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public Boolean getGender() {
-        return gender;
-    }
-
-    public void setGender(Boolean gender) {
-        this.gender = gender;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Set<Tenant> getTenants() {

@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 @Table(name = "tb_tenant")
 public class Tenant extends BaseEntity{
-    @OneToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToOne
     @JoinColumn(name = "account_id")
     private Account account;
     private String name;
@@ -15,6 +15,16 @@ public class Tenant extends BaseEntity{
     private String mobile;
     private Boolean gender;
     private Integer age;
+    @ManyToOne(targetEntity = House.class)
+    private House house;
+
+    public House getHouse() {
+        return house;
+    }
+
+    public void setHouse(House house) {
+        this.house = house;
+    }
 
     public Account getAccount() {
         return account;

@@ -1,14 +1,13 @@
 package com.qcc.domain;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "tb_house")
 public class House extends BaseEntity{
-    private BigDecimal price;
+    private Integer price;
     //房屋描述
     @Lob
     @Column(columnDefinition="TEXT")
@@ -28,6 +27,8 @@ public class House extends BaseEntity{
     private String payMent;
     // 房屋面积
     private Integer area;
+    @ManyToOne(targetEntity = Landlord.class)
+    private Landlord landlord;
     // 小区周边
     @Lob
     @Column(columnDefinition="TEXT")
@@ -46,21 +47,30 @@ public class House extends BaseEntity{
     @Column(columnDefinition="TEXT")
     private String characteristic;
     // 租客信息
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
-    @JoinColumn(name = "tenant_id")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
     private Set<Tenant> tenants = new HashSet<Tenant>();
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = Image.class)
-    @JoinColumn(name = "image_id")
+    @OneToMany(targetEntity = Image.class,mappedBy = "house",fetch = FetchType.LAZY)
     private Set<Image> images = new HashSet<Image>();
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = HouseLog.class)
-    @JoinColumn(name = "houselog_id")
+    // 因为每个月都会产生租费信息 所以这里时 N
+    @OneToMany(fetch = FetchType.LAZY,targetEntity = HouseLog.class,mappedBy = "house")
     private Set<HouseLog> houseLogs = new HashSet<HouseLog>();
+    // 因为这个房子可能会维修多次
+    @OneToMany(targetEntity = RepairInfo.class, mappedBy = "house")
+    private Set<RepairInfo> repairInfos = new HashSet<RepairInfo>();
 
-    public BigDecimal getPrice() {
+    public Set<RepairInfo> getRepairInfos() {
+        return repairInfos;
+    }
+
+    public void setRepairInfos(Set<RepairInfo> repairInfos) {
+        this.repairInfos = repairInfos;
+    }
+
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
