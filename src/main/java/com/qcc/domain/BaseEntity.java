@@ -1,5 +1,6 @@
 package com.qcc.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,8 +17,10 @@ public class BaseEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @LastModifiedDate
+
     private Date updateTime;
     @CreatedDate
+
     private Date createTime;
 
     public Integer getId() {
@@ -27,7 +30,7 @@ public class BaseEntity implements Serializable{
     public void setId(Integer id) {
         this.id = id;
     }
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -35,7 +38,7 @@ public class BaseEntity implements Serializable{
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getCreateTime() {
         return createTime;
     }

@@ -1,6 +1,8 @@
 package com.qcc.utils;
 
-public class ResponseVO<T> {
+import java.io.Serializable;
+
+public class ResponseVO<T> implements Serializable{
     private Boolean success;
     private String message;
     private T result;
@@ -27,5 +29,14 @@ public class ResponseVO<T> {
 
     public void setResult(T result) {
         this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return "ResponseVO{" +
+                "success=" + success +
+                ", message='" + message + '\'' +
+                ", result=" + result +
+                '}';
     }
 }
