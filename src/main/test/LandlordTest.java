@@ -1,10 +1,9 @@
 import com.qcc.Application;
 import com.qcc.dao.AccountDao;
-import com.qcc.dao.TenantDao;
+import com.qcc.dao.LandlordDao;
 import com.qcc.domain.Account;
-import com.qcc.domain.Tenant;
-import com.qcc.service.TenantService;
-import com.qcc.utils.ResponseVO;
+import com.qcc.domain.Landlord;
+import com.qcc.service.LandlordService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -13,27 +12,21 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Set;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
-public class TenantDaoTest {
+public class LandlordTest {
     @Autowired
-    private TenantDao tenantDao;
+    LandlordDao landlordDao;
     @Autowired
-    private AccountDao accountDao;
-    @Autowired
-    private TenantService tenantService;
+    AccountDao accountDao;
     @Test
     public void testInsert() {
-     /*   Tenant tenant = new Tenant();
-        Account account = new Account();
-        BeanUtils.copyProperties(accountDao.findOne(3), account);
-        tenant.setAccount(account);
-        tenantDao.save(tenant);*/
-    }
-    @Test
-    public void testSelect(){
+        Landlord landlord = new Landlord();
+        Account account = accountDao.findOne(1);
+        Account account1 = new Account();
+        BeanUtils.copyProperties(account,account1);
+        landlord.setAccount(account1);
+        landlordDao.save(landlord);
     }
 }

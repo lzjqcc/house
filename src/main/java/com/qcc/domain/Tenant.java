@@ -15,7 +15,7 @@ public class Tenant extends BaseEntity{
     private String mobile;
     private Boolean gender;
     private Integer age;
-    @ManyToOne(targetEntity = House.class)
+    @ManyToOne(targetEntity = House.class,fetch = FetchType.LAZY)
     private House house;
 
     public House getHouse() {

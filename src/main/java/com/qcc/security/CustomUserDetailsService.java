@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleListProperty;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService{
     private AccountDao accountDao;
     public Authentication loadAccount(String userName, String password) {
         Account account = accountDao.findAccountByUserNameAndPassword(userName, password);
+        if (account == null) {
+            throw new UsernameNotFoundException("用户名或密码错误");
+        }
         AccountToken token = new AccountToken(account.getUserName(), account.getPassword(), Lists.newArrayList(new SimpleGrantedAuthority(account.getRole().value)));
         token.setAccount(account);
        return token;

@@ -14,9 +14,9 @@ import java.util.List;
 
 @Service
 public class LandlordService {
-    /*@PostConstruct
+    @PostConstruct
     public void inject(){
-        List<Landlord> list = landlordDao.findAll();
+     /*   List<Landlord> list = landlordDao.findAll();
         if (list == null || list.size() == 0) {
             return;
         }
@@ -25,8 +25,8 @@ public class LandlordService {
         BeanUtils.copyProperties(accountDao.findOne(1), account);
         landlord.setAccount(account);
 
-        landlordDao.save(landlord);
-    }*/
+        landlordDao.save(landlord);*/
+    }
     @Autowired
     private LandlordDao landlordDao;
     @Autowired

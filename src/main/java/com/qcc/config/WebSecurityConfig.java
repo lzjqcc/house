@@ -12,6 +12,7 @@ import com.qcc.utils.CommUtils;
 import com.qcc.utils.JsonUtils;
 import com.qcc.utils.ResponseVO;
 import net.minidev.json.JSONUtil;
+import org.assertj.core.util.Lists;
 import org.json.JSONObject;
 import org.json.JSONString;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
@@ -19,6 +20,7 @@ import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,6 +30,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -36,14 +39,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        List list = Lists.newArrayList(new WebExpressionVoter());
         http.csrf().disable();
         http.cors().disable();
         http.authorizeRequests().mvcMatchers("/account/update").authenticated();
+        http.authorizeRequests().mvcMatchers("/tenant/*","/teant/**").access("hasAuthority('tenant')").accessDecisionManager(new AffirmativeBased(list));
         http.exceptionHandling().accessDeniedHandler(new AccessDeniedHandler() {
             @Override
             public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
@@ -68,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     try {
                         response.setContentType("application/json");
                         writer = response.getWriter();
-                        writer.write(JSONUtils.toJSONString(responseVO));
+                        writer.write(JsonUtils.toJson(responseVO));
                         writer.flush();
                     } finally {
                         CommUtils.closeStream(writer);
@@ -120,7 +127,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 PrintWriter writer = null;
                 try {
                     ResponseVO responseVO = new ResponseVO();
-                    responseVO.setMessage("登录失败");
+                    responseVO.setMessage(exception.getMessage());
                     responseVO.setSuccess(false);
                     response.setContentType("application/json");
                     writer = response.getWriter();

@@ -10,13 +10,13 @@ import java.util.Set;
 public class Landlord extends BaseEntity{
 
     // 登陆信息
-    @OneToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToOne(cascade = {CascadeType.REMOVE})
     private Account account;
     @OneToMany(targetEntity =House.class,mappedBy = "landlord")
     private Set<House> houses = new HashSet<House>();
 
     // 租客
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Tenant> tenants = new HashSet<Tenant>();
 
     public Account getAccount() {

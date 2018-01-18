@@ -52,7 +52,7 @@ public class House extends BaseEntity{
     @OneToMany(targetEntity = Image.class,mappedBy = "house",fetch = FetchType.LAZY)
     private Set<Image> images = new HashSet<Image>();
     // 因为每个月都会产生租费信息 所以这里时 N
-    @OneToMany(fetch = FetchType.LAZY,targetEntity = HouseLog.class,mappedBy = "house")
+    @OneToMany(fetch = FetchType.LAZY,targetEntity = HouseLog.class,mappedBy = "house",cascade = CascadeType.REFRESH)
     private Set<HouseLog> houseLogs = new HashSet<HouseLog>();
     // 因为这个房子可能会维修多次
     @OneToMany(targetEntity = RepairInfo.class, mappedBy = "house")
