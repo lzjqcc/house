@@ -48,6 +48,7 @@ public class House extends BaseEntity{
     private String characteristic;
     // 租客信息
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
+    @JoinTable(name = "tb_tenant_house",joinColumns = @JoinColumn(name = "house_id"),inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants = new HashSet<Tenant>();
     @OneToMany(targetEntity = Image.class,mappedBy = "house",fetch = FetchType.LAZY)
     private Set<Image> images = new HashSet<Image>();
@@ -200,5 +201,13 @@ public class House extends BaseEntity{
 
     public void setImages(Set<Image> images) {
         this.images = images;
+    }
+
+    public Landlord getLandlord() {
+        return landlord;
+    }
+
+    public void setLandlord(Landlord landlord) {
+        this.landlord = landlord;
     }
 }

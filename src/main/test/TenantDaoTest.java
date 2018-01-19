@@ -1,19 +1,18 @@
 import com.qcc.Application;
 import com.qcc.dao.AccountDao;
 import com.qcc.dao.TenantDao;
-import com.qcc.domain.Account;
+import com.qcc.domain.Landlord;
 import com.qcc.domain.Tenant;
 import com.qcc.service.TenantService;
-import com.qcc.utils.ResponseVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Set;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -25,6 +24,7 @@ public class TenantDaoTest {
     private AccountDao accountDao;
     @Autowired
     private TenantService tenantService;
+
     @Test
     public void testInsert() {
      /*   Tenant tenant = new Tenant();
@@ -35,5 +35,16 @@ public class TenantDaoTest {
     }
     @Test
     public void testSelect(){
+        Landlord landlord = new Landlord();
+        landlord.setId(1);
+        PageRequest request = new PageRequest(1,1);
+        List<Tenant> list = tenantDao.findTenantsByLandlord(landlord, request);
+        for (Tenant tenant : list) {
+            System.out.println(tenant.getAccount());
+        }
+    }
+    @Test
+    public void deleteRelation() {
+        tenantService.deleteHouseTenantRelation(2);
     }
 }

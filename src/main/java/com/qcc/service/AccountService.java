@@ -57,14 +57,6 @@ public class AccountService {
         tenant.setUserName("li");
         accountDao.save(tenant);
     }
-    public ResponseVO<Account> login(Account account) {
-        Account user = accountDao.findAccountByUserNameAndPassword(account.getUserName(), account.getPassword());
-        if (user == null) {
-            return CommUtils.buildReponseVo(false, Constant.LOGIN_FAIL,null);
-        }
-
-        return CommUtils.buildReponseVo(true,Constant.LOGIN_SUCCESS,user);
-    }
     public ResponseVO<Account> register(Account account) {
         if (account== null) {
             return CommUtils.buildReponseVo(false,Constant.OPERAT_FAIL, null);

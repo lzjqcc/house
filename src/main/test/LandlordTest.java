@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -28,5 +30,9 @@ public class LandlordTest {
         BeanUtils.copyProperties(account,account1);
         landlord.setAccount(account1);
         landlordDao.save(landlord);
+    }
+    @Test
+    public void select() {
+
     }
 }

@@ -2,14 +2,20 @@ package com.qcc.utils;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.qcc.domain.Account;
+import com.qcc.domain.BaseEntity;
 import com.qcc.security.AccountToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CommUtils {
+
     public static <T> ResponseVO<T> buildReponseVo(Boolean success, String message , T t) {
         ResponseVO<T> responseVO = new ResponseVO();
         responseVO.setSuccess(success);

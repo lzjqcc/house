@@ -98,6 +98,18 @@ public class Account extends BaseEntity{
         this.role = role;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Account{" +
+                "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", name='" + name + '\'' +
+                ", job='" + job + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", gender=" + gender +
+                ", age=" + age +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

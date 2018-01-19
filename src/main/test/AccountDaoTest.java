@@ -29,6 +29,10 @@ public class AccountDaoTest {
 
     }
     @Test
+    public void testSelect() {
+
+    }
+    @Test
     public void update() {
 
         Account account = accountDao.findOne(2);
