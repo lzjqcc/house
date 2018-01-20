@@ -6,7 +6,7 @@ import java.util.Date;
 
 // 租费信息
 @Entity
-@Table(name = "tb_house_log")
+@Table(name = "tb_houselog")
 public class HouseLog extends BaseEntity{
 
     //水费

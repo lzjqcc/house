@@ -40,7 +40,60 @@ public class HouseDto implements Serializable {
     //特色
     private String characteristic;
     private Set<Image> images;
-    private Landlord landlord ;
+    private Integer landLordId;
+    private String landLordName;
+    private String landLordMobile;
+    private Boolean landLordGender;
+    private String landLordDescribtion;
+    private Integer landLordAge;
+
+    public Integer getLandLordId() {
+        return landLordId;
+    }
+
+    public void setLandLordId(Integer landLordId) {
+        this.landLordId = landLordId;
+    }
+
+    public String getLandLordName() {
+        return landLordName;
+    }
+
+    public void setLandLordName(String landLordName) {
+        this.landLordName = landLordName;
+    }
+    public String getLandLordMobile() {
+
+        return landLordMobile;
+    }
+    public void setLandLordMobile(String landLordMobile) {
+
+        this.landLordMobile = landLordMobile;
+    }
+
+    public Boolean getLandLordGender() {
+        return landLordGender;
+    }
+
+    public void setLandLordGender(Boolean landLordGender) {
+        this.landLordGender = landLordGender;
+    }
+
+    public String getLandLordDescribtion() {
+        return landLordDescribtion;
+    }
+
+    public void setLandLordDescribtion(String landLordDescribtion) {
+        this.landLordDescribtion = landLordDescribtion;
+    }
+
+    public Integer getLandLordAge() {
+        return landLordAge;
+    }
+
+    public void setLandLordAge(Integer landLordAge) {
+        this.landLordAge = landLordAge;
+    }
 
     public Integer getId() {
         return id;
@@ -178,11 +231,31 @@ public class HouseDto implements Serializable {
         this.images = images;
     }
 
-    public Landlord getLandlord() {
-        return landlord;
-    }
-
-    public void setLandlord(Landlord landlord) {
-        this.landlord = landlord;
+    @Override
+    public String toString() {
+        return "HouseDto{" +
+                "id=" + id +
+                ", updateTime=" + updateTime +
+                ", createTime=" + createTime +
+                ", description='" + description + '\'' +
+                ", address='" + address + '\'' +
+                ", room='" + room + '\'' +
+                ", hire=" + hire +
+                ", decoration='" + decoration + '\'' +
+                ", payMent='" + payMent + '\'' +
+                ", area=" + area +
+                ", surrounding='" + surrounding + '\'' +
+                ", configInfo='" + configInfo + '\'' +
+                ", roomArea=" + roomArea +
+                ", direction='" + direction + '\'' +
+                ", status='" + status + '\'' +
+                ", characteristic='" + characteristic + '\'' +
+                ", images=" + images +
+                ", landLordName='" + landLordName + '\'' +
+                ", landLordMobile='" + landLordMobile + '\'' +
+                ", landLordGender=" + landLordGender +
+                ", landLordDescribtion='" + landLordDescribtion + '\'' +
+                ", landLordAge=" + landLordAge +
+                '}';
     }
 }

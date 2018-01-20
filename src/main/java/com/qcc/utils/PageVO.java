@@ -1,9 +1,12 @@
 package com.qcc.utils;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class PageVO<T> implements Serializable{
+    @NotNull
     private Integer size;
+    @NotNull
     private Integer currentPage;
     private Integer count;
     private T entity;

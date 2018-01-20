@@ -47,7 +47,7 @@ public class House extends BaseEntity{
     @Column(columnDefinition="TEXT")
     private String characteristic;
     // 租客信息
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
+    @OneToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
     @JoinTable(name = "tb_tenant_house",joinColumns = @JoinColumn(name = "house_id"),inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants = new HashSet<Tenant>();
     @OneToMany(targetEntity = Image.class,mappedBy = "house",fetch = FetchType.LAZY)

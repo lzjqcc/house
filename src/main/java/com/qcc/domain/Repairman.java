@@ -9,7 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tb_repairman")
 public class Repairman extends BaseEntity{
-    @OneToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToOne(cascade = {CascadeType.REMOVE})
     @JoinColumn(name = "account_id")
     private Account account;
     @OneToMany(targetEntity = RepairInfo.class,mappedBy = "repairman")

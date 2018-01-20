@@ -4,10 +4,11 @@ import com.qcc.enums.RepairInfoEnum;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 // 维修信息  房东发布的维修任务，维修人员接受的维修任务
 @Entity
-@Table(name = "tb_repair_info")
+@Table(name = "tb_repairinfo")
 public class RepairInfo extends BaseEntity{
     //租客
     @ManyToOne(fetch = FetchType.LAZY,targetEntity = Tenant.class)
@@ -25,6 +26,34 @@ public class RepairInfo extends BaseEntity{
     private Date repairTime;
     @ManyToOne(targetEntity = House.class,fetch = FetchType.LAZY)
     private House house;
+    private Integer repairPrice;
+    private String describtion;
+    @OneToMany
+    private Set<Image> images;
+
+    public String getDescribtion() {
+        return describtion;
+    }
+
+    public void setDescribtion(String describtion) {
+        this.describtion = describtion;
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
+    }
+
+    public Integer getRepairPrice() {
+        return repairPrice;
+    }
+
+    public void setRepairPrice(Integer repairPrice) {
+        this.repairPrice = repairPrice;
+    }
 
     public House getHouse() {
         return house;

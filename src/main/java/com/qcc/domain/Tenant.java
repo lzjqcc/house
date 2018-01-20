@@ -1,6 +1,7 @@
 package com.qcc.domain;
 
 import javax.persistence.*;
+import java.util.Set;
 
 // 租客
 @Entity
