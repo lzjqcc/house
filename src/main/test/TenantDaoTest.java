@@ -38,10 +38,10 @@ public class TenantDaoTest {
         Landlord landlord = new Landlord();
         landlord.setId(1);
         PageRequest request = new PageRequest(1,1);
-        List<Tenant> list = tenantDao.findTenantsByLandlord(landlord, request);
+      /*  List<Tenant> list = tenantDao.findTenantsByLandlord(landlord, request);
         for (Tenant tenant : list) {
             System.out.println(tenant.getAccount());
-        }
+        }*/
     }
     @Test
     public void deleteRelation() {

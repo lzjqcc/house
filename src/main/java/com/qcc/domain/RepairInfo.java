@@ -28,8 +28,17 @@ public class RepairInfo extends BaseEntity{
     private House house;
     private Integer repairPrice;
     private String describtion;
+    private String repairThing;
     @OneToMany
     private Set<Image> images;
+
+    public String getRepairThing() {
+        return repairThing;
+    }
+
+    public void setRepairThing(String repairThing) {
+        this.repairThing = repairThing;
+    }
 
     public String getDescribtion() {
         return describtion;

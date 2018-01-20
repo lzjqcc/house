@@ -11,10 +11,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
 import java.util.List;
 
 @Service
-@Order(100)
+@Order(2)
 public class LandlordService {
     @PostConstruct
     public void inject(){

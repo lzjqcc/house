@@ -10,10 +10,15 @@ import com.qcc.domain.Landlord;
 import com.qcc.domain.Tenant;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.Constant;
+import com.qcc.utils.PageVO;
 import com.qcc.utils.ResponseVO;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -74,13 +79,18 @@ public class TenantService {
      * @param landLordId 房东id
      * @return
      */
-    public ResponseVO<Map<Integer,TenantDto>> findLandlordTenants(Integer landLordId, PageRequest pageRequest) {
+    public PageVO<List<TenantDto>> findLandlordTenants(Integer landLordId, PageVO<List<TenantDto>> pageVO) {
         Landlord landlord = new Landlord();
         landlord.setId(landLordId);
-
-        List<Tenant> list = tenantDao.findTenantsByLandlord(landlord, pageRequest);
-
-        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS,tenantDtoMap(list));
+        PageRequest pageRequest = new PageRequest(pageVO.getCurrentPage() - 1, pageVO.getSize());
+        PageImpl<Tenant> pageImpl = (PageImpl<Tenant>) tenantDao.findTenantsByLandlord(landlord, pageRequest);
+        List<Tenant> list = pageImpl.getContent();
+        List<TenantDto> dtos = Lists.newArrayList();
+        for (Tenant tenant: list) {
+            dtos.add(buildTenantDto(tenant.getAccount(), tenant));
+        }
+        pageVO.setEntity(dtos);
+        return pageVO;
     }
     private Map<Integer,TenantDto> tenantDtoMap(List<Tenant> list) {
         Map<Integer, TenantDto> map = new LinkedHashMap<>();

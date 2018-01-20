@@ -18,6 +18,7 @@ import org.assertj.core.util.Sets;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageImpl;
@@ -28,6 +29,7 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -39,7 +41,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
-@Order(1000)
+@DependsOn(value = {"landlordService","tenantService"})
 public class HouseService {
     @Autowired
     private HouseDao houseDao;
@@ -55,8 +57,7 @@ public class HouseService {
 
             return;
         }
-        Landlord landlord = new Landlord();
-        BeanUtils.copyProperties(landlordDao.findOne(1), landlord);
+        Landlord landlord = landlordDao.findOne(1);
         House house = new House();
         house.setAddress("江西省上饶市余干县");
         house.setDecoration("简修");

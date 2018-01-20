@@ -3,6 +3,7 @@ package com.qcc.dao;
 import com.qcc.domain.House;
 import com.qcc.domain.Landlord;
 import com.qcc.domain.Tenant;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface TenantDao extends BaseRepository<Tenant> {
      * @param pageable
      * @return
      */
-    List<Tenant> findTenantsByLandlord(Landlord landlord, Pageable pageable);
+    Page<Tenant> findTenantsByLandlord(Landlord landlord, Pageable pageable);
 
     /**
      * 查询房子下租客

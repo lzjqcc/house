@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.jpa.internal.EntityManagerImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
+@Order(1)
 public class AccountService {
     @Autowired
     private AccountDao accountDao;
