@@ -1,5 +1,6 @@
 package com.qcc.dao;
 
+import com.qcc.domain.Account;
 import com.qcc.domain.House;
 import com.qcc.domain.Landlord;
 import com.qcc.domain.Tenant;
@@ -24,5 +25,9 @@ public interface TenantDao extends BaseRepository<Tenant> {
      * @return
      */
     List<Tenant> findTenantsByHouse(House house, Pageable pageable);
+
+    Tenant findTenantByAccount(Account account);
+
+
 
 }

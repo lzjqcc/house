@@ -1,9 +1,11 @@
 package com.qcc.service;
 
+import com.qcc.annotation.Cache;
 import com.qcc.dao.*;
 import com.qcc.dao.dto.AccountDto;
 import com.qcc.domain.*;
 import com.qcc.enums.ROLEEnum;
+import com.qcc.utils.CacheMap;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.Constant;
 import com.qcc.utils.ResponseVO;
@@ -33,6 +35,8 @@ public class AccountService {
     private TenantDao tenantDao;
     @Autowired
     private RepairmanDao repairmanDao;
+    @Cache(space ="accountId")
+    private CacheMap<String> cacheMap;
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AccountService.class);
     @PostConstruct
     public void injectData() {

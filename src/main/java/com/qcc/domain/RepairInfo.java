@@ -20,8 +20,8 @@ public class RepairInfo extends BaseEntity{
     @ManyToOne(targetEntity = Repairman.class,fetch = FetchType.LAZY)
     @JoinColumn(name = "repairman_id",referencedColumnName = "id")
     private Repairman repairman;
-    @Enumerated(value = EnumType.ORDINAL)
-    private RepairInfoEnum status;
+    // @link RepairInfoEnum
+    private Integer status;
     // 确定维修时间
     private Date repairTime;
     @ManyToOne(targetEntity = House.class,fetch = FetchType.LAZY)
@@ -96,11 +96,11 @@ public class RepairInfo extends BaseEntity{
         this.repairman = repairman;
     }
 
-    public RepairInfoEnum getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(RepairInfoEnum status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
