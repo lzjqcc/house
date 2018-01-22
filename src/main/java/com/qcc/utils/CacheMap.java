@@ -29,4 +29,11 @@ public  class CacheMap<T> {
         return space +":" +key;
     }
 
+    @Override
+    public String toString() {
+        return "CacheMap{" +
+                "cache=" + cache +
+                ", space='" + space + '\'' +
+                '}';
+    }
 }

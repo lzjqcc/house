@@ -1,7 +1,9 @@
 import com.qcc.Application;
+import com.qcc.annotation.Cache;
 import com.qcc.dao.AccountDao;
 import com.qcc.domain.Account;
 import com.qcc.service.AccountService;
+import com.qcc.utils.CacheMap;
 import org.hibernate.jpa.internal.EntityManagerImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,12 @@ public class AccountDaoTest {
     AccountService accountService;
     @Autowired
     AccountDao accountDao;
+    @Cache(space = "image")
+    CacheMap<String> cacheMap;
+    @Test
+    public void test() {
+        System.out.println(cacheMap);
+    }
     @Test
     public void testInsert() {
         Account account = new Account();
