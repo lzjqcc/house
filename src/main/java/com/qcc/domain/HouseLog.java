@@ -17,6 +17,26 @@ public class HouseLog extends BaseEntity{
     private Integer price;
     @ManyToOne(targetEntity = House.class,fetch = FetchType.LAZY)
     private House house;
+    @ManyToOne(targetEntity = Tenant.class, fetch = FetchType.LAZY)
+    private Tenant tenant;
+    // 租客是否确认
+    private Boolean sure;
+
+    public Boolean getSure() {
+        return sure;
+    }
+
+    public void setSure(Boolean sure) {
+        this.sure = sure;
+    }
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
+    }
 
     public House getHouse() {
         return house;

@@ -2,12 +2,14 @@ package com.qcc.service;
 
 import com.qcc.dao.*;
 import com.qcc.dao.dto.RepairInfoDto;
+import com.qcc.dao.dto.RepairInfoOrderDto;
 import com.qcc.domain.*;
 import com.qcc.enums.RepairInfoEnum;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.Constant;
 import com.qcc.utils.PageVO;
 import com.qcc.utils.ResponseVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +38,7 @@ public class RepairInfoService {
     @Autowired
     private LandlordDao landlordDao;
     /**
-     * 更新 维修状态,当维修状态为：接受维修，就插入一条维修完成的订单
+     * 更新 维修状态,当维修状态为：接受维修，就插入一条维修的订单
      *维修人员接受 维修任务
      * @param repairInfoId
      * @param repairInfoEnum
@@ -133,6 +135,28 @@ public class RepairInfoService {
         return pageVo;
     }
 
+    /**
+     * 维修人员查看自己的订单
+     * @param repairman
+     * @param pageVO
+     * @return
+     */
+    public PageVO<List<RepairInfoOrderDto>> findRepairInfoOrderByRepairman(Repairman repairman, PageVO<List<RepairInfoOrderDto>> pageVO) {
+
+        PageImpl<RepairInfoOrder> page = repairInfoOrderDao.findRepairInfoOrderByRepairman(repairman, getPageRequest(pageVO));
+        List<RepairInfoOrder> list = page.getContent();
+        List<RepairInfoOrderDto> dtos = new ArrayList<>();
+        for (RepairInfoOrder order : list) {
+            dtos.add(buildRepairInfoOrderDto(order));
+        }
+        pageVO.setEntity(dtos);
+        return pageVO;
+    }
+    private RepairInfoOrderDto buildRepairInfoOrderDto(RepairInfoOrder order) {
+        RepairInfoOrderDto dto = new RepairInfoOrderDto();
+        BeanUtils.copyProperties(order, dto);
+        return  dto;
+    }
     private void buildPageVO(PageImpl<RepairInfo> page, PageVO<List<RepairInfoDto>> pageVO) {
         pageVO.setCount(page.getTotalPages());
         List<RepairInfoDto> dtos = new ArrayList<>();
@@ -141,7 +165,11 @@ public class RepairInfoService {
             dtos.add(buildPageInfoDto(repairInfo));
         }
     }
-
+    private PageRequest getPageRequest(PageVO<?> pageVO) {
+        Sort sort = new Sort(Sort.Direction.DESC, "createTime");
+        PageRequest request = new PageRequest(pageVO.getCurrentPage() - 1, pageVO.getSize(), sort);
+        return request;
+    }
     private RepairInfoDto buildPageInfoDto(RepairInfo repairInfo) {
         RepairInfoDto dto = new RepairInfoDto();
         dto.setCreateTime(repairInfo.getCreateTime());

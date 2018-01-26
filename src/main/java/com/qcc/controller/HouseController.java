@@ -3,17 +3,22 @@ package com.qcc.controller;
 import com.qcc.dao.LandlordDao;
 import com.qcc.dao.dto.HouseDto;
 import com.qcc.dao.dto.HouseLogDto;
+import com.qcc.dao.dto.TenantDto;
 import com.qcc.domain.Account;
 import com.qcc.domain.HouseLog;
 import com.qcc.domain.Landlord;
 import com.qcc.service.HouseService;
+import com.qcc.service.TenantService;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.PageVO;
+import com.qcc.utils.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/house")
@@ -22,7 +27,8 @@ public class HouseController {
     private HouseService houseService;
     @Autowired
     private LandlordDao landlordDao;
-
+    @Autowired
+    private TenantService tenantService;
     /**
      * 根据条件组合来查询房子
      *
@@ -73,5 +79,17 @@ public class HouseController {
         pageVO.setSize(size);
         pageVO.setCurrentPage(currentPage);
         return houseService.findHouseLogs(houseId, pageVO);
+    }
+
+    /**
+     * 查看house下的租客
+     * @return
+     */
+    @RequestMapping(value = "/findHouseTenants", method = RequestMethod.GET)
+    public ResponseVO<Map<Integer,TenantDto>> findHouseTenants(@RequestParam("houseId")Integer houseId,
+                                                               @RequestParam("currentPage")Integer currentPage,
+                                                               @RequestParam("size")Integer size) {
+        PageRequest request = new PageRequest(currentPage -1, size);
+        return tenantService.findHouseTenants(houseId, request);
     }
 }
