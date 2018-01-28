@@ -67,7 +67,12 @@ public class HouseService {
         house.setTenants(Sets.newHashSet(Lists.newArrayList(tenant)));
         houseDao.save(house);
     }
-
+    /**
+     * 房东查看有几套贩子
+     * @param landlord
+     * @param pageVO
+     * @return
+     */
     public PageVO<List<HouseDto>> findHouseByLandLoard(Landlord landlord, PageVO pageVO) {
         PageRequest pageRequest = new PageRequest(pageVO.getCurrentPage() - 1, pageVO.getSize(), new Sort(Sort.Direction.DESC, "createTime"));
         PageImpl<House> page = (PageImpl<House>) houseDao.findHousesByLandlord(landlord, pageRequest);
@@ -92,7 +97,7 @@ public class HouseService {
     }
 
     /**
-     * 查询该房子 房租的信息
+     * 查询该房子 租费的信息
      * @param houseId
      * @param pageVO
      * @return

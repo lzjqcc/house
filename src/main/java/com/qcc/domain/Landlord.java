@@ -16,9 +16,9 @@ public class Landlord extends BaseEntity{
     private Set<House> houses = new HashSet<House>();
 
     // 租客
-    @ManyToOne(fetch = FetchType.LAZY,targetEntity = Tenant.class)
+    @OneToMany(fetch = FetchType.LAZY,targetEntity = Tenant.class,cascade = CascadeType.REFRESH)
     @JoinTable(name = "tb_tenant_landlord",joinColumns = @JoinColumn(name = "landlord_id"),inverseJoinColumns = @JoinColumn(name = "tenant_id"))
-    private Set<Tenant> tenants ;
+    private Set<Tenant> tenants = new HashSet<>();
 
     public Account getAccount() {
         return account;

@@ -33,6 +33,8 @@ public class RepairmanService {
         repairman.setAccount(account);
         repairmanDao.save(repairman);
     }
-
+    public Repairman findRepairman(Account account) {
+        return repairmanDao.findRepairmanByAccount(account);
+    }
 
 }

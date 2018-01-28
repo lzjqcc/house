@@ -1,13 +1,18 @@
 import com.qcc.Application;
 import com.qcc.dao.AccountDao;
+import com.qcc.dao.RepairInfoOrderDao;
+import com.qcc.dao.RepairmanDao;
 import com.qcc.dao.TenantDao;
 import com.qcc.domain.Landlord;
+import com.qcc.domain.RepairInfoOrder;
+import com.qcc.domain.Repairman;
 import com.qcc.domain.Tenant;
 import com.qcc.service.TenantService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,7 +29,15 @@ public class TenantDaoTest {
     private AccountDao accountDao;
     @Autowired
     private TenantService tenantService;
-
+    @Autowired
+    RepairInfoOrderDao repairInfoOrderDao;
+    @Test
+    public void testRe() {
+        Repairman repairman = new Repairman();
+        repairman.setId(1);
+        PageImpl<RepairInfoOrder> repairInfoOrders = repairInfoOrderDao.findRepairInfoOrderByRepairman(repairman, new PageRequest(0, 1));
+        System.out.println(repairInfoOrders);
+    }
     @Test
     public void testInsert() {
      /*   Tenant tenant = new Tenant();

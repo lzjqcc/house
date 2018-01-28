@@ -1,7 +1,10 @@
 package com.qcc.dao.dto;
 
+import com.qcc.domain.House;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class HouseLogDto implements Serializable{
     private static final long serialVersionUID = 7214966397951822701L;
@@ -13,6 +16,26 @@ public class HouseLogDto implements Serializable{
     private Integer electricExpense;
     // 房租费
     private Integer price;
+    // 租客是否确认
+    private Boolean sure;
+    private String houseName;
+
+    public String getHouseName() {
+        return houseName;
+    }
+
+    public void setHouseName(String houseName) {
+        this.houseName = houseName;
+    }
+
+    public Boolean getSure() {
+        return sure;
+    }
+
+    public void setSure(Boolean sure) {
+        this.sure = sure;
+    }
+
 
     public Integer getId() {
         return id;

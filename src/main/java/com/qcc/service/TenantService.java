@@ -1,13 +1,8 @@
 package com.qcc.service;
 
-import com.qcc.dao.AccountDao;
-import com.qcc.dao.LandlordDao;
-import com.qcc.dao.TenantDao;
+import com.qcc.dao.*;
 import com.qcc.dao.dto.TenantDto;
-import com.qcc.domain.Account;
-import com.qcc.domain.House;
-import com.qcc.domain.Landlord;
-import com.qcc.domain.Tenant;
+import com.qcc.domain.*;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.Constant;
 import com.qcc.utils.PageVO;
@@ -32,6 +27,10 @@ public class TenantService {
     private TenantDao tenantDao;
     @Autowired
     private AccountDao accountDao;
+    @Autowired
+    private HouseDao houseDao;
+    @Autowired
+    private HouseOrderDao houseOrderDao;
     @PostConstruct
     public void inject() {
        List<Tenant> list = tenantDao.findAll();
@@ -48,6 +47,21 @@ public class TenantService {
         tenantDao.save(tenant);
     }
 
+    /**
+     * 租客租房
+     * @return
+     */
+    public ResponseVO tenantHouse(Integer houseId, Tenant tenant) {
+        House house = houseDao.findOne(houseId);
+        tenant.setHouse(house);
+        tenant.setLandlord(house.getLandlord());
+        HouseOrder order = new HouseOrder();
+        BeanUtils.copyProperties(house, order);
+        order.setTenant(tenant);
+        houseOrderDao.save(order);
+        tenantDao.save(tenant);
+        return CommUtils.buildReponseVo(true,"操作成功", null);
+    }
     /**
      * 租客退租
      * @param tenantId
@@ -69,6 +83,7 @@ public class TenantService {
      * @return
      */
     public ResponseVO<Map<Integer,TenantDto>>  findHouseTenants(Integer houseId, PageRequest pageRequest) {
+
         House house = new House();
         house.setId(houseId);
         List<Tenant> list = tenantDao.findTenantsByHouse(house, pageRequest);

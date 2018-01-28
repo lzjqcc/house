@@ -1,5 +1,8 @@
 import com.qcc.Application;
 import com.qcc.dao.dto.HouseDto;
+import com.qcc.domain.HouseLog;
+import com.qcc.domain.Tenant;
+import com.qcc.service.HouseLogService;
 import com.qcc.service.HouseService;
 import com.qcc.utils.PageVO;
 import org.junit.Test;
@@ -19,6 +22,8 @@ import java.util.List;
 public class HouseDaoTest {
     @Autowired
     private HouseService houseService;
+    @Autowired
+    HouseLogService houseLogService;
     @Test
     public void select() {
         HouseDto houseDto = new HouseDto();
@@ -27,5 +32,12 @@ public class HouseDaoTest {
         pageVO.setSize(10);
         PageVO<List<HouseDto>> pageVO1 = houseService.findHouses(houseDto, pageVO);
         System.out.println(pageVO1.getEntity().size());
+    }
+    @Test
+    public void test() {
+        HouseLog log = new HouseLog();
+        Tenant tenant = new Tenant();
+        tenant.setId(1);
+        log.setTenant(tenant);
     }
 }
