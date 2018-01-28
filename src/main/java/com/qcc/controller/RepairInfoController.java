@@ -25,7 +25,7 @@ public class RepairInfoController {
     RepairInfoService repairInfoService;
     @Autowired
     RepairmanService repairmanService;
-    @Cache(space = "repairinfo")
+    @Cache(space = "image")
     CacheMap<List<String>> cacheMap;
     @RequestMapping(value = "/applyRepair",method = RequestMethod.POST)
     public ResponseVO applyRepair(@RequestBody RepairInfoDto dto) {

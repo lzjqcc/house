@@ -50,7 +50,7 @@ public class House extends BaseEntity{
     @OneToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
     @JoinTable(name = "tb_tenant_house",joinColumns = @JoinColumn(name = "house_id"),inverseJoinColumns = @JoinColumn(name = "tenant_id"))
     private Set<Tenant> tenants = new HashSet<Tenant>();
-    @OneToMany(targetEntity = Image.class,mappedBy = "house",fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Image.class,fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<Image> images = new HashSet<Image>();
     // 因为每个月都会产生租费信息 所以这里时 N
     @OneToMany(fetch = FetchType.LAZY,targetEntity = HouseLog.class,mappedBy = "house",cascade = CascadeType.REFRESH)

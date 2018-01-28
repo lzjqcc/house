@@ -35,8 +35,7 @@ public class AccountService {
     private TenantDao tenantDao;
     @Autowired
     private RepairmanDao repairmanDao;
-    @Cache(space ="accountId")
-    private CacheMap<String> cacheMap;
+
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AccountService.class);
     @PostConstruct
     public void injectData() {

@@ -56,7 +56,6 @@ public class ImageController {
 
     }
 
-    //todo 图片压缩
     @RequestMapping(value = "/uploadPicture", method = RequestMethod.POST)
     public Map<String, Object> uploadArticlePic(@RequestParam(value = "image") MultipartFile uploadFile) throws IOException {
         BufferedInputStream inputStream = null;
@@ -74,7 +73,6 @@ public class ImageController {
         } catch (Exception e) {
             if (file != null) {
                 file.deleteOnExit();
-                ;
             }
             e.printStackTrace();
         } finally {

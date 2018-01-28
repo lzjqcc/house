@@ -29,7 +29,7 @@ public class RepairInfo extends BaseEntity{
     private Integer repairPrice;
     private String describtion;
     private String repairThing;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
     private Set<Image> images;
 
     public String getRepairThing() {
