@@ -4,6 +4,7 @@ import com.qcc.dao.LandlordDao;
 import com.qcc.domain.Account;
 import com.qcc.domain.Landlord;
 import com.qcc.service.LandlordService;
+import com.qcc.utils.CommUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -43,10 +44,8 @@ public class LandlordTest {
     }
     @Test
     public void select() throws IOException {
-       Resource resource = resourceLoader.getResource("file:src/main/resources/images");
-       File file = Files.createDirectories(Paths.get(resource.getFile().getPath(), "2")).toFile();
-        System.out.println(resource.getURI().toString());
-        System.out.println(resource.getURL().toString());
-        System.out.println(file.exists());
+       Resource resource = resourceLoader.getResource("file:src/main/resources/images/2");
+       File file = Files.createDirectories(Paths.get(resource.getFile().getPath(), "b.txt")).toFile();
+        System.out.println(CommUtils.getImageURL(file.getPath()));
     }
 }

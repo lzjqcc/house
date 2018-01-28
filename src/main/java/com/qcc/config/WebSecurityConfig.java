@@ -30,11 +30,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -47,8 +48,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         List list = Lists.newArrayList(new WebExpressionVoter());
+        http.addFilterBefore(new Filter() {
+            @Override
+            public void init(FilterConfig filterConfig) throws ServletException {
+
+            }
+
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+               HttpServletResponse response = (HttpServletResponse) servletResponse;
+                response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+
+                response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+
+                response.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With,userId,token,withCredentials");
+
+                response.setHeader("Access-Control-Allow-Credentials", "true");
+                chain.doFilter(request, response);
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        }, ChannelProcessingFilter.class);
         http.csrf().disable();
         http.cors().disable();
+        http.authorizeRequests().antMatchers("/login").permitAll();
+        http.authorizeRequests().antMatchers("image/**").permitAll();
         http.authorizeRequests().mvcMatchers("/account/update").authenticated();
         http.authorizeRequests().mvcMatchers("/tenant/*","/teant/**").access("hasAuthority('tenant')").accessDecisionManager(new AffirmativeBased(list));
         http.exceptionHandling().accessDeniedHandler(new AccessDeniedHandler() {

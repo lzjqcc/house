@@ -28,13 +28,15 @@ public class CommUtils {
         }
         return responseVO;
     }
+
     public static String getImageURL(String path) {
         if (StringUtils.isEmpty(path)) {
             return "";
         }
-        String [] splits = path.split("\\/");
-        return HOST + splits[splits.length - 1];
+        String [] splits = path.split("\\\\");
+        return HOST +"image/"+splits[splits.length-2]+"/"+splits[splits.length - 1];
     }
+
     public static Account getCurrentAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AccountToken) {
@@ -53,6 +55,6 @@ public class CommUtils {
         }
     }
     public static void main(String[] args) {
-        System.out.println(JSONUtils.toJSONString(CommUtils.buildReponseVo(false, "skldf", null)));
+
     }
 }
