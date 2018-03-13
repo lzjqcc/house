@@ -1,6 +1,7 @@
 package com.qcc.dao.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.qcc.domain.Account;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class CommentDto implements Serializable {
      */
     private Integer replayId;
     private Integer houseId;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private List<CommentDto> children;
 
     public List<CommentDto> getChildren() {
