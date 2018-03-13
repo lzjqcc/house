@@ -30,11 +30,7 @@ public class CustomAuthenticationProcessingFilter extends AbstractAuthentication
             throw new BuisnessException(400, "请求姿势不对");
         }
         Account account = getAccountFromRequest(request);
-        if (StringUtils.isEmpty(account.getUserName()) || StringUtils.isEmpty(account.getPassword())) {
-            throw new BuisnessException(401, "email or password不能为空");
-        }
-        account.setUserName(account.getUserName().trim());
-        account.setPassword(account.getPassword().trim());
+
         AccountToken authRequest = new AccountToken(account.getUserName(), account.getPassword(), null);
         setDetails(request, authRequest);
 
@@ -49,9 +45,15 @@ public class CustomAuthenticationProcessingFilter extends AbstractAuthentication
      * @throws IOException
      */
     private Account getAccountFromRequest(HttpServletRequest request) throws IOException {
-        HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-        return (Account) messageConverter.read(Account.class, new MappingJacksonInputMessage(request.getInputStream(), null));
-
+        String userName = request.getParameter("userName");
+        String password = request.getParameter("password");
+        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
+            throw new BuisnessException(403, "用户名或密码不能为空");
+        }
+        Account account = new Account();
+        account.setUserName(userName.trim());
+        account.setPassword(password.trim());
+        return account;
     }
 
 

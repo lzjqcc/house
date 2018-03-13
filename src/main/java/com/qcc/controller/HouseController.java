@@ -1,10 +1,12 @@
 package com.qcc.controller;
 
+import com.qcc.dao.HouseDao;
 import com.qcc.dao.LandlordDao;
 import com.qcc.dao.dto.HouseDto;
 import com.qcc.dao.dto.HouseLogDto;
 import com.qcc.dao.dto.TenantDto;
 import com.qcc.domain.Account;
+import com.qcc.domain.House;
 import com.qcc.domain.HouseLog;
 import com.qcc.domain.Landlord;
 import com.qcc.service.HouseService;
@@ -29,6 +31,7 @@ public class HouseController {
     private LandlordDao landlordDao;
     @Autowired
     private TenantService tenantService;
+
     /**
      * 根据条件组合来查询房子
      *
@@ -66,6 +69,7 @@ public class HouseController {
 
     /**
      * 查询房租信息
+     *
      * @param houseId
      * @param size
      * @param currentPage
@@ -83,13 +87,19 @@ public class HouseController {
 
     /**
      * 查看house下的租客
+     *
      * @return
      */
     @RequestMapping(value = "/findHouseTenants", method = RequestMethod.GET)
-    public ResponseVO<Map<Integer,TenantDto>> findHouseTenants(@RequestParam("houseId")Integer houseId,
-                                                               @RequestParam("currentPage")Integer currentPage,
-                                                               @RequestParam("size")Integer size) {
-        PageRequest request = new PageRequest(currentPage -1, size);
+    public ResponseVO<Map<Integer, TenantDto>> findHouseTenants(@RequestParam("houseId") Integer houseId,
+                                                                @RequestParam("currentPage") Integer currentPage,
+                                                                @RequestParam("size") Integer size) {
+        PageRequest request = new PageRequest(currentPage - 1, size);
         return tenantService.findHouseTenants(houseId, request);
+    }
+
+    @RequestMapping(value = "/pubilshHouse", method = RequestMethod.POST)
+    public ResponseVO publishHouse(@RequestBody House house) {
+        return houseService.publishHouse(house, CommUtils.getCurrentAccount());
     }
 }

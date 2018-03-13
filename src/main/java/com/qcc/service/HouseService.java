@@ -1,17 +1,11 @@
 package com.qcc.service;
 
-import com.qcc.dao.HouseDao;
-import com.qcc.dao.HouseLogDao;
-import com.qcc.dao.LandlordDao;
-import com.qcc.dao.TenantDao;
+import com.qcc.annotation.Cache;
+import com.qcc.dao.*;
 import com.qcc.dao.dto.HouseDto;
 import com.qcc.dao.dto.HouseLogDto;
-import com.qcc.domain.House;
-import com.qcc.domain.HouseLog;
-import com.qcc.domain.Landlord;
-import com.qcc.domain.Tenant;
-import com.qcc.utils.PageVO;
-import com.qcc.utils.ResponseVO;
+import com.qcc.domain.*;
+import com.qcc.utils.*;
 import com.sun.org.apache.bcel.internal.generic.LAND;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
@@ -34,10 +28,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -51,6 +42,9 @@ public class HouseService {
     private TenantDao tenantDao;
     @Autowired
     private HouseLogDao houseLogDao;
+
+    @Cache(space = "image")
+    private CacheMap<List<String>> cacheMap;
     @PostConstruct
     public void inject() {
         if (houseDao.findAll().size() > 0) {
@@ -66,6 +60,20 @@ public class HouseService {
         BeanUtils.copyProperties(tenantDao.findOne(1), tenant);
         house.setTenants(Sets.newHashSet(Lists.newArrayList(tenant)));
         houseDao.save(house);
+    }
+    public ResponseVO publishHouse(House house, Account account) {
+        Landlord landlord = landlordDao.findLandlordByAccount_Id(account.getId());
+        house.setLandlord(landlord);
+        Set<Image> images = new LinkedHashSet<>();
+        List<String> imageURLs = cacheMap.get(account.getId()+"");
+        for (String imageURL : imageURLs) {
+            Image image = new Image();
+            image.setUrl(imageURL);
+            images.add(image);
+        }
+        house.setImages(images);
+        houseDao.save(house);
+        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, null);
     }
     /**
      * 房东查看有几套贩子

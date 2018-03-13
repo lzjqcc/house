@@ -8,7 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public  class CacheMap<T> {
-    private final Map<String, T> cache = new ConcurrentHashMap<>(128);
+    private final static Map<String, Object
+            > cache = new ConcurrentHashMap<>(128);
     private final String space;
     public CacheMap(String space) {
         this.space = space;
@@ -17,7 +18,7 @@ public  class CacheMap<T> {
         cache.put(getKey(key), value);
     }
     public T get(String key) {
-        return cache.get(getKey(key));
+        return (T) cache.get(getKey(key));
     }
     public void removeAll() {
         cache.clear();

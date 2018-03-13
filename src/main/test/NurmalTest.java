@@ -1,10 +1,12 @@
 import com.qcc.annotation.Cache;
 import com.qcc.domain.Account;
 import com.qcc.utils.CacheMap;
+import com.qcc.utils.CommUtils;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -36,5 +38,10 @@ public class NurmalTest {
         map.put("b", "c");
         map.clear();
         System.out.println(map);
+    }
+    @Test
+    public void tesResourst() {
+        File file = new File(CommUtils.IMAGE_DIR, "1");
+        file.mkdirs();
     }
 }
