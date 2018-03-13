@@ -13,7 +13,14 @@ import com.qcc.utils.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingByConcurrent;
+import static java.util.stream.Collectors.partitioningBy;
 
 @Service
 public class CommentService {
@@ -48,9 +55,43 @@ public class CommentService {
      * @param houseId
      * @return
      */
-    public PageVO pullComment(Integer houseId) {
-        List<Comment> list = commentDao.findByHouseId(houseId);
+    public ResponseVO<List<CommentDto>> pullComment(Integer houseId) {
 
-        return null;
+        List<Comment> list = commentDao.findByHouseId(houseId);
+        Map<Boolean, List<Comment>> partitioned =
+                list.stream().collect(partitioningBy(e -> e.getReplayId() > 0));
+        List<Comment> children = partitioned.get(true);
+        List<Comment> commentList = partitioned.get(false);
+        Iterator<Comment> iterator = children.iterator();
+        List<CommentDto> parents = new ArrayList<>();
+        for (Comment comment : commentList) {
+                CommentDto parent = buildCommentDto(comment);
+                CommentDto temp = parent;
+                List<CommentDto> commentDtos = new ArrayList<>();
+                iterator = children.iterator();
+                while (iterator.hasNext()) {
+                    Comment next = iterator.next();
+                    if (next.getReplayId().intValue() == temp.getId().intValue()) {
+                        commentDtos.add(buildCommentDto(next));
+                        iterator.remove();
+                        temp = buildCommentDto(next);
+                    }
+
+                }
+                parent.setChildren(commentDtos);
+                parents.add(parent);
+            }
+        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, parents);
+    }
+    private CommentDto buildCommentDto(Comment comment) {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(comment.getId());
+        commentDto.setConversation(comment.getConversation());
+        commentDto.setToAccountId(comment.getToAccount().getId());
+        commentDto.setToAccountName(comment.getToAccount().getName());
+        commentDto.setCreateTime(comment.getCreateTime());
+        commentDto.setFromAccountName(comment.getFromAccount().getName());
+        commentDto.setReplayId(comment.getReplayId());
+        return commentDto;
     }
 }

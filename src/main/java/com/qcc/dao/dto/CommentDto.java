@@ -5,6 +5,7 @@ import com.qcc.domain.Account;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class CommentDto implements Serializable {
     private static final long serialVersionUID = 7531458679843605L;
@@ -16,6 +17,15 @@ public class CommentDto implements Serializable {
      */
     private Integer replayId;
     private Integer houseId;
+    private List<CommentDto> children;
+
+    public List<CommentDto> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<CommentDto> children) {
+        this.children = children;
+    }
 
     public Integer getHouseId() {
         return houseId;
@@ -42,7 +52,7 @@ public class CommentDto implements Serializable {
     }
 
     private String conversation;
-    private String id;
+    private Integer id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
@@ -70,11 +80,11 @@ public class CommentDto implements Serializable {
         this.conversation = conversation;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
