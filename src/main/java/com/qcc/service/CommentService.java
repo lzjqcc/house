@@ -62,13 +62,12 @@ public class CommentService {
                 list.stream().collect(partitioningBy(e -> e.getReplayId() > 0));
         List<Comment> children = partitioned.get(true);
         List<Comment> commentList = partitioned.get(false);
-        Iterator<Comment> iterator = children.iterator();
         List<CommentDto> parents = new ArrayList<>();
         for (Comment comment : commentList) {
                 CommentDto parent = buildCommentDto(comment);
                 CommentDto temp = parent;
                 List<CommentDto> commentDtos = new ArrayList<>();
-                iterator = children.iterator();
+                Iterator<Comment> iterator = children.iterator();
                 while (iterator.hasNext()) {
                     Comment next = iterator.next();
                     if (next.getReplayId().intValue() == temp.getId().intValue()) {

@@ -116,7 +116,7 @@ public class RepairInfoService {
     }
 
     /**
-     * 查询房东们发布的维修任务
+     * 维修人员查询房东们发布的维修任务
      *
      * @param dto
      * @param pageVo
