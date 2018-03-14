@@ -98,6 +98,11 @@ public class HouseController {
         return tenantService.findHouseTenants(houseId, request);
     }
 
+    /**
+     * 发布房子信息
+     * @param house
+     * @return
+     */
     @RequestMapping(value = "/pubilshHouse", method = RequestMethod.POST)
     public ResponseVO publishHouse(@RequestBody House house) {
         return houseService.publishHouse(house, CommUtils.getCurrentAccount());
