@@ -17,6 +17,12 @@ public class TenantComtroller {
     private TenantService tenantService;
     @Autowired
     TenantDao tenantDao;
+
+    /**
+     * 租客租房
+     * @param houseId
+     * @return
+     */
     @RequestMapping(value = "/tenantHouse", method = RequestMethod.GET)
     public ResponseVO tenantHouse(Integer houseId) {
         Tenant tenant =tenantDao.findTenantByAccount(CommUtils.getCurrentAccount());
