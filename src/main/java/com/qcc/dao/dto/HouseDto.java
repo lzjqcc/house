@@ -18,6 +18,8 @@ public class HouseDto implements Serializable {
     private Date createTime;
     private String description;
     private String address;
+    private Integer maxPrice;
+    private Integer minPrice;
     //几室几厅
     private String room;
     // 是否整租
@@ -46,6 +48,22 @@ public class HouseDto implements Serializable {
     private Boolean landLordGender;
     private String landLordDescribtion;
     private Integer landLordAge;
+
+    public Integer getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(Integer maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public Integer getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(Integer minPrice) {
+        this.minPrice = minPrice;
+    }
 
     public Integer getLandLordId() {
         return landLordId;

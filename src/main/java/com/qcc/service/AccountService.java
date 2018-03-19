@@ -66,6 +66,10 @@ public class AccountService {
         if (account== null) {
             return CommUtils.buildReponseVo(false,Constant.OPERAT_FAIL, null);
         }
+       Account account1 = accountDao.findAccountByUserNameAndPassword(account.getUserName(), account.getPassword());
+        if (account1 != null) {
+            return CommUtils.buildReponseVo(false, Constant.EXITES_USER, null);
+        }
         accountDao.save(account);
         if (account.getRole().code == ROLEEnum.Landlord.code) {
 

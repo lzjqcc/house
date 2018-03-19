@@ -55,9 +55,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             }
 
             @Override
-            public void doFilter(ServletRequest request, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-               HttpServletResponse response = (HttpServletResponse) servletResponse;
-                response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+                HttpServletResponse response = (HttpServletResponse) servletResponse;
+                HttpServletRequest request = (HttpServletRequest) servletRequest;
+                System.out.println(request.getRemoteAddr());
+                System.out.println(request.getRemotePort());
+                System.out.println(                request.getRequestURI());
+                System.out.println(request.getRequestURL());
+                response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 
                 response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
 
@@ -77,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/login").permitAll();
         http.authorizeRequests().antMatchers("image/**").permitAll();
         http.authorizeRequests().mvcMatchers("/account/update").authenticated();
-        http.authorizeRequests().mvcMatchers("/tenant/*","/teant/**").access("hasAuthority('tenant')").accessDecisionManager(new AffirmativeBased(list));
+        http.authorizeRequests().mvcMatchers("/tenant/*", "/teant/**").access("hasAuthority('tenant')").accessDecisionManager(new AffirmativeBased(list));
         http.exceptionHandling().accessDeniedHandler(new AccessDeniedHandler() {
             @Override
             public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
@@ -113,12 +118,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         });
 
     }
+
     @Bean
-    public CustomUserDetailsService customUserDetailsService(){
+    public CustomUserDetailsService customUserDetailsService() {
         return new CustomUserDetailsService();
     }
+
     @Bean
-    public CustomAuthenticationProcessingFilter authenticationProcessingFilter () throws Exception {
+    public CustomAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
         AuthenticationManager authenticationManager = this.authenticationManager();
         CustomAuthenticationProcessingFilter filter = new CustomAuthenticationProcessingFilter(authenticationManager);
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
@@ -167,6 +174,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         });
         return filter;
     }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         CustomProvider provider = new CustomProvider();

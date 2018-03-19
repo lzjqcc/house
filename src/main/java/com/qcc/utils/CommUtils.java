@@ -45,6 +45,9 @@ public class CommUtils {
         }
         return new Account();
     }
+    /*public static Account setCurrentAccount(Account account) {
+        SecurityContextHolder.getContext().setAuthentication(account);
+    }*/
     public static void closeStream(Closeable stream){
         if (stream!=null){
             try {

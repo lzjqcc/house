@@ -20,14 +20,8 @@ public class AccountController {
     @Autowired
     AccountService accountService;
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseVO<? extends BaseEntity> register(@RequestBody Account account, HttpSession session) throws NoSuchFieldException, IllegalAccessException {
+    public ResponseVO<? extends BaseEntity> register(@RequestBody Account account) throws NoSuchFieldException, IllegalAccessException {
         ResponseVO<? extends BaseEntity> responseVO = accountService.register(account);
-        if (responseVO.getSuccess()) {
-           Field field = ReflectionUtils.findField(responseVO.getResult().getClass(), "account");
-           if (field != null) {
-               session.setAttribute("account", field.get(responseVO.getResult()));
-           }
-        }
         return responseVO;
     }
     @RequestMapping(value = "/update", method = RequestMethod.POST)

@@ -68,6 +68,14 @@ public class HouseController {
     }
 
     /**
+   * 获取表头条件 ：区域，整租，朝向
+     * @return
+     */
+    @RequestMapping(value = "/tableHead")
+    public ResponseVO getTableHead() {
+        return houseService.getTableHead();
+    }
+    /**
      * 查询房租信息
      *
      * @param houseId

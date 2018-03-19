@@ -59,6 +59,15 @@ public class House extends BaseEntity{
     @OneToMany(targetEntity = RepairInfo.class, mappedBy = "house")
     private Set<RepairInfo> repairInfos = new HashSet<RepairInfo>();
 
+    public House(String address, Boolean hire, String decoration) {
+        this.address = address;
+        this.hire = hire;
+        this.decoration = decoration;
+    }
+
+    public House() {
+    }
+
     public Set<RepairInfo> getRepairInfos() {
         return repairInfos;
     }

@@ -5,8 +5,10 @@ import com.qcc.dao.*;
 import com.qcc.dao.dto.HouseDto;
 import com.qcc.dao.dto.HouseLogDto;
 import com.qcc.domain.*;
+import com.qcc.enums.TableEnum;
 import com.qcc.utils.*;
 import com.sun.org.apache.bcel.internal.generic.LAND;
+import javafx.scene.control.Tab;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
 import org.springframework.beans.BeanUtils;
@@ -141,7 +143,32 @@ public class HouseService {
         }
         pageVO.setEntity(houseDtos);
     }
-
+    public ResponseVO getTableHead() {
+        List<House> list = houseDao.findTableHead();
+        Map<String, Set<String>> map = new HashMap<>();
+        Set<String> address = new HashSet<>();
+        Set<String> hire = new HashSet<>();
+        Set<String> direction = new HashSet<>();
+        Set<String> price = new HashSet<>();
+        price.add(houseDao.findMaxPrice() + "");
+        price.add(houseDao.findMinxPrice() + "");
+        for (House house: list) {
+            if (house.getAddress() != null) {
+                address.add(house.getAddress());
+            }
+            if (house.getHire() != null) {
+                hire.add(house.getHire()? "整租" : "合租");
+            }
+            if (house.getDecoration() != null) {
+                direction.add(house.getDecoration());
+            }
+        }
+        map.put(TableEnum.ADDRESS.value, address);
+        map.put(TableEnum.HIRE.value, hire);
+        map.put(TableEnum.DIRECTION.value, direction);
+        map.put(TableEnum.PRICE.value, price);
+        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, map);
+    }
     /**
      * 组合查询条件
      *
@@ -173,7 +200,16 @@ public class HouseService {
                 if (house.getDecoration() != null) {
                     predicates.add(cb.equal(root.get("decoration").as(String.class), house.getDecoration()));
                 }
-
+                if (house.getMinPrice() != null && house.getMaxPrice() != null) {
+                    predicates.add(cb.greaterThan(root.get("price").as(Integer.class), house.getMinPrice()));
+                    predicates.add(cb.lessThan(root.get("price").as(Integer.class), house.getMaxPrice()));
+                }
+                if (house.getMinPrice() != null && house.getMaxPrice() == null) {
+                    predicates.add(cb.lessThan(root.get("price"), house.getMinPrice()));
+                }
+                if (house.getMaxPrice() != null && house.getMinPrice() == null) {
+                    predicates.add(cb.greaterThan(root.get("price"), house.getMaxPrice()));
+                }
                 Predicate[] pre = new Predicate[predicates.size()];
                 ;
                 return query.where(predicates.toArray(pre)).getRestriction();
