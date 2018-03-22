@@ -17,4 +17,6 @@ public interface HouseDao extends BaseRepository<House> {
     Integer findMaxPrice();
     @Query("select min(price) from House")
     Integer findMinxPrice();
+    @Query("select t from House t order by t.click desc")
+    List<House> findBastHouse();
 }

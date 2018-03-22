@@ -63,6 +63,10 @@ public class HouseService {
         house.setTenants(Sets.newHashSet(Lists.newArrayList(tenant)));
         houseDao.save(house);
     }
+    public ResponseVO<List<HouseDto>> findBastHouse() {
+
+        return null;
+    }
     public ResponseVO publishHouse(House house, Account account) {
         Landlord landlord = landlordDao.findLandlordByAccount_Id(account.getId());
         house.setLandlord(landlord);
@@ -105,7 +109,14 @@ public class HouseService {
         buildPageVO(pageVO, page);
         return pageVO;
     }
-
+    public ResponseVO<HouseDto> clickHouse(Integer houseId) {
+        House house = houseDao.findOne(houseId);
+        house.setClick(house.getClick() == null ? 1 : house.getClick() + 1);
+        houseDao.save(house);
+        HouseDto houseDto = new HouseDto();
+        BeanUtils.copyProperties(house, houseDto);
+        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, houseDto);
+    }
     /**
      * 查询该房子 租费的信息
      * @param houseId

@@ -1,5 +1,7 @@
 package com.qcc.domain;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +48,7 @@ public class House extends BaseEntity{
     @Lob
     @Column(columnDefinition="TEXT")
     private String characteristic;
+    private Integer click;
     // 租客信息
     @OneToMany(cascade = {CascadeType.REFRESH},fetch = FetchType.LAZY, targetEntity = Tenant.class)
     @JoinTable(name = "tb_tenant_house",joinColumns = @JoinColumn(name = "house_id"),inverseJoinColumns = @JoinColumn(name = "tenant_id"))
@@ -58,6 +61,14 @@ public class House extends BaseEntity{
     // 因为这个房子可能会维修多次
     @OneToMany(targetEntity = RepairInfo.class, mappedBy = "house")
     private Set<RepairInfo> repairInfos = new HashSet<RepairInfo>();
+
+    public Integer getClick() {
+        return click;
+    }
+
+    public void setClick(Integer click) {
+        this.click = click;
+    }
 
     public House(String address, Boolean hire, String decoration) {
         this.address = address;

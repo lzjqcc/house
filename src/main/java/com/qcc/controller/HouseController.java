@@ -33,6 +33,18 @@ public class HouseController {
     private TenantService tenantService;
 
     /**
+     * 查看房子信息
+     * @param houseId
+     * @return
+     */
+    @RequestMapping(value = "/seeHouse")
+    public ResponseVO<HouseDto> clickHouse(Integer houseId) {
+        return houseService.clickHouse(houseId);
+    }
+    public ResponseVO<List<HouseDto>> findBastHouse() {
+        return null;
+    }
+    /**
      * 根据条件组合来查询房子
      *
      * @param dto
