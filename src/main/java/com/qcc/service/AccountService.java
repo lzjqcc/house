@@ -104,8 +104,9 @@ public class AccountService {
             return CommUtils.buildReponseVo(false, Constant.OPERAT_FAIL, account);
         }
         account = accountDao.findOne(dto.getId());
-        BeanUtils.copyProperties(dto, account,"createTime","updateTime");
+        BeanUtils.copyProperties(dto, account,CommUtils.findNullFieldName(dto));
         accountDao.save(account);
+        CommUtils.updateCurrentAccount(account);
         return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, account);
     }
 

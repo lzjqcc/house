@@ -1,4 +1,7 @@
 import com.qcc.Application;
+import com.qcc.dao.AccountDao;
+import com.qcc.dao.dto.CommentDto;
+import com.qcc.domain.Account;
 import com.qcc.service.CommentService;
 import com.qcc.utils.ResponseVO;
 import org.junit.Test;
@@ -14,10 +17,16 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class CommentServiceTest {
     @Autowired
+    AccountDao accountDao;
+    @Autowired
     CommentService commentService;
     @Test
     public void test() {
-        ResponseVO responseVO = commentService.pullComment(1);
-        int i = 0;
+
+        Account fromAccount = accountDao.findOne(4);
+        CommentDto commentDto = new CommentDto();
+        commentDto.setToAccountId(1);
+        commentDto.setConversation("真是菜");
+        commentService.pushComment(fromAccount,commentDto);
     }
 }

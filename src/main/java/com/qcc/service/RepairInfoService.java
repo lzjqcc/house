@@ -4,6 +4,7 @@ import com.qcc.dao.*;
 import com.qcc.dao.dto.RepairInfoDto;
 import com.qcc.dao.dto.RepairInfoOrderDto;
 import com.qcc.domain.*;
+import com.qcc.enums.ROLEEnum;
 import com.qcc.enums.RepairInfoEnum;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.Constant;
@@ -48,7 +49,7 @@ public class RepairInfoService {
         RepairInfo repairInfo = repairInfoDao.findOne(repairInfoId);
         repairInfo.setStatus(repairInfoEnum);
         // 接受维修任务，写入repairInfoOrder
-        if (repairInfoEnum == RepairInfoEnum.REPAIRMAN_COMPLETE.code) {
+        if (repairInfoEnum == RepairInfoEnum.REPAIRMAN_RECEIVE.code) {
             if (repairmanId == null) {
                 return CommUtils.buildReponseVo(false, Constant.OPERAT_FAIL+":没有维修人员",null );
             }
@@ -61,6 +62,7 @@ public class RepairInfoService {
             order.setRepairman(repairman);
             order.setRepairThing(repairInfo.getRepairThing());
             order.setRepairInfoId(repairInfo.getId());
+            repairInfo.setRepairman(repairman);
             repairInfoOrderDao.save(order);
         }
         // 维修完成
@@ -82,13 +84,15 @@ public class RepairInfoService {
      */
     public ResponseVO<RepairInfoDto> pubilshRepairInfo(Account tenantAccount, RepairInfoDto dto) {
         RepairInfo repairInfo = new RepairInfo();
-        repairInfo.setTenant(tenantDao.findTenantByAccount(tenantAccount));
+        Tenant tenant = tenantDao.findTenantByAccount(tenantAccount);
+        repairInfo.setTenant(tenant);
         repairInfo.setDescribtion(dto.getDescribtion());
-        House house = houseDao.findOne(dto.getHouseId());
-        repairInfo.setHouse(house);
+        repairInfo.setHouse(tenant.getHouse());
+        repairInfo.setMobile(dto.getMobile());
         repairInfo.setStatus(RepairInfoEnum.TENANT_APPLY.code);
-        repairInfo.setLandlord(landlordDao.findLandlordByTenants(repairInfo.getTenant()));
+        repairInfo.setLandlord(tenant.getLandlord());
         repairInfo.setRepairThing(dto.getRepairThing());
+        repairInfo.setRepairTime(dto.getRepairTime());
         if (dto.getImagesURL() != null) {
             Set<Image> images = new HashSet<>();
             List<String> imageURLs = dto.getImagesURL();
@@ -99,18 +103,27 @@ public class RepairInfoService {
             }
             repairInfo.setImages(images);
         }
-        repairInfo = repairInfoDao.save(repairInfo);
+        repairInfoDao.save(repairInfo);
         return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, null);
     }
     /**
-     * 房东查询自己发布的维修任务
+     * 查询维修任务
      * @param account
      * @param pageVO
      * @return
      */
-    public PageVO<List<RepairInfoDto>> findRepairInfoByLandlord(Account account, PageVO<List<RepairInfoDto>> pageVO, Integer status) {
+    public PageVO<List<RepairInfoDto>> findRepairInfos(Account account, PageVO<List<RepairInfoDto>> pageVO) {
         PageRequest pageRequest = new PageRequest(pageVO.getCurrentPage() - 1, pageVO.getSize(), new Sort(Sort.Direction.DESC, "createTime"));
-        PageImpl<RepairInfo> page = (PageImpl<RepairInfo>) repairInfoDao.findRepairInfosByLandlord_AccountAndStatus(account, status,pageRequest);
+        PageImpl<RepairInfo> page = null;
+        if (account.getRole().code == ROLEEnum.Landlord.code) {
+            page = (PageImpl<RepairInfo>) repairInfoDao.findRepairInfosByLandlord_Account_Id(account.getId(),pageRequest);
+        }
+        if (account.getRole().code == ROLEEnum.Tenant.code) {
+            page = (PageImpl<RepairInfo>) repairInfoDao.findRepairInfosByTenant_Account(account, pageRequest);
+        }
+        if (account.getRole().code == ROLEEnum.Repairman.code) {
+            page = (PageImpl<RepairInfo>) repairInfoDao.findRepairInfosByRepairman_Account(account, pageRequest);
+        }
         buildPageVO(page, pageVO);
         return pageVO;
     }
@@ -130,7 +143,7 @@ public class RepairInfoService {
         } else {
             sort = new Sort(Sort.Direction.DESC, "createTime");
         }
-        PageImpl<RepairInfo> pageImpl = (PageImpl<RepairInfo>) repairInfoDao.findAll(getWhereCase(dto), new PageRequest(pageVo.getCurrentPage() - 1, pageVo.getSize(), sort));
+        PageImpl<RepairInfo> pageImpl = (PageImpl<RepairInfo>) repairInfoDao.findRepairInfosByStatus(RepairInfoEnum.LANDLORD_AGREE.code, new PageRequest(pageVo.getCurrentPage() - 1, pageVo.getSize(), sort));
         buildPageVO(pageImpl, pageVo);
         return pageVo;
     }
@@ -158,12 +171,13 @@ public class RepairInfoService {
         return  dto;
     }
     private void buildPageVO(PageImpl<RepairInfo> page, PageVO<List<RepairInfoDto>> pageVO) {
-        pageVO.setCount(page.getTotalPages());
+        pageVO.setCount((int) page.getTotalElements());
         List<RepairInfoDto> dtos = new ArrayList<>();
         List<RepairInfo> list = page.getContent();
         for (RepairInfo repairInfo : list) {
             dtos.add(buildPageInfoDto(repairInfo));
         }
+        pageVO.setEntity(dtos);
     }
     private PageRequest getPageRequest(PageVO<?> pageVO) {
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
@@ -174,14 +188,15 @@ public class RepairInfoService {
         RepairInfoDto dto = new RepairInfoDto();
         dto.setCreateTime(repairInfo.getCreateTime());
         dto.setDescribtion(repairInfo.getDescribtion());
-        dto.setHouseAddress(repairInfo.getHouse().getAddress());
+        dto.setHouseAddress(repairInfo.getHouse().getAddress()+repairInfo.getHouse().getAddressDetails() == null ? "": repairInfo.getHouse().getAddressDetails());
         dto.setId(repairInfo.getId());
         dto.setLandlordId(repairInfo.getLandlord().getId());
-        dto.setLandlordMobile(repairInfo.getLandlord().getAccount().getMobile());
+        dto.setMobile(repairInfo.getMobile());
         dto.setLandlordName(repairInfo.getLandlord().getAccount().getName());
         dto.setRepairThing(repairInfo.getRepairThing());
         dto.setRepairTime(repairInfo.getRepairTime());
         dto.setRepairPrice(repairInfo.getRepairPrice());
+        dto.setStatus(RepairInfoEnum.getValue(repairInfo.getStatus()));
         Set<Image> images = repairInfo.getImages();
         List<String> list = new ArrayList<>();
         for (Image image : images) {
@@ -210,6 +225,7 @@ public class RepairInfoService {
                 if (dto.getCreateTime() != null) {
                     predicates.add(cb.greaterThanOrEqualTo(root.get("createTime").as(Date.class), dto.getCreateTime()));
                 }
+                predicates.add(cb.equal(root.get("status").as(Integer.class), 2));
                 Predicate[] pre = new Predicate[predicates.size()];
                 return query.where(predicates.toArray(pre)).getRestriction();
             }

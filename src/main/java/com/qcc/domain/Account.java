@@ -25,6 +25,11 @@ public class Account extends BaseEntity{
     @Column(columnDefinition="TEXT")
     private String description;
 
+    @Override
+    public Integer getId() {
+        return super.getId();
+    }
+
     public String getName() {
         return name;
     }

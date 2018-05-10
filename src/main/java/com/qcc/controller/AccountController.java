@@ -26,11 +26,15 @@ public class AccountController {
     }
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseVO<Account> update(@RequestBody Account accountDto) {
+        accountDto.setId(CommUtils.getCurrentAccount().getId());
         return accountService.update(accountDto);
     }
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseVO<Account> get() {
         Account account = CommUtils.getCurrentAccount();
+        if (account.getId() == null) {
+            return CommUtils.buildReponseVo(false, "获取失败", account);
+        }
         return CommUtils.buildReponseVo(true, "获取成功", account);
     }
 }

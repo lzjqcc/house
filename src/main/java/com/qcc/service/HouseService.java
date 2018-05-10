@@ -1,14 +1,18 @@
 package com.qcc.service;
 
+import com.alibaba.druid.util.StringUtils;
 import com.qcc.annotation.Cache;
+import com.qcc.controller.ImageController;
 import com.qcc.dao.*;
 import com.qcc.dao.dto.HouseDto;
 import com.qcc.dao.dto.HouseLogDto;
+import com.qcc.dao.dto.TenantDto;
 import com.qcc.domain.*;
 import com.qcc.enums.TableEnum;
 import com.qcc.utils.*;
 import com.sun.org.apache.bcel.internal.generic.LAND;
 import javafx.scene.control.Tab;
+import org.apache.commons.collections.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
 import org.springframework.beans.BeanUtils;
@@ -16,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class HouseService {
     private HouseLogDao houseLogDao;
 
     @Cache(space = "image")
-    private CacheMap<List<String>> cacheMap;
+    private CacheMap<List<ImageController.ImageFile>> cacheMap;
     @PostConstruct
     public void inject() {
         if (houseDao.findAll().size() > 0) {
@@ -64,20 +65,33 @@ public class HouseService {
         houseDao.save(house);
     }
     public ResponseVO<List<HouseDto>> findBastHouse() {
-
-        return null;
+        Pageable pageable = new PageRequest(0, 5 , new Sort(Sort.Direction.DESC,"click"));
+        List<House> list = houseDao.findAll(pageable).getContent();
+        List<HouseDto> houseDtos = new ArrayList<>();
+        list.stream().forEach(t -> {
+            HouseDto dto = new HouseDto();
+            BeanUtils.copyProperties(t, dto);
+            houseDtos.add(dto);
+        });
+        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, houseDtos );
     }
+
     public ResponseVO publishHouse(House house, Account account) {
         Landlord landlord = landlordDao.findLandlordByAccount_Id(account.getId());
         house.setLandlord(landlord);
         Set<Image> images = new LinkedHashSet<>();
-        List<String> imageURLs = cacheMap.get(account.getId()+"");
-        for (String imageURL : imageURLs) {
-            Image image = new Image();
-            image.setUrl(imageURL);
-            images.add(image);
+        List<ImageController.ImageFile> imageURLs = cacheMap.get(account.getId()+"");
+        if (imageURLs != null && imageURLs.size() > 0) {
+            for (ImageController.ImageFile imageURL : imageURLs) {
+                Image image = new Image();
+                image.setUrl(imageURL.getUrl());
+                images.add(image);
+                cacheMap.remove(account.getId()+"");
+            }
+            house.setImages(images);
+
         }
-        house.setImages(images);
+        house.setStatus(false);
         houseDao.save(house);
         return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, null);
     }
@@ -113,9 +127,19 @@ public class HouseService {
         House house = houseDao.findOne(houseId);
         house.setClick(house.getClick() == null ? 1 : house.getClick() + 1);
         houseDao.save(house);
+        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, buildHouseDto(house));
+    }
+    private HouseDto buildHouseDto(House house) {
         HouseDto houseDto = new HouseDto();
         BeanUtils.copyProperties(house, houseDto);
-        return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, houseDto);
+        houseDto.setLandLordAge(house.getLandlord().getAccount().getAge());
+        houseDto.setLandLordGender(house.getLandlord().getAccount().getGender());
+        houseDto.setLandLordMobile(house.getLandlord().getAccount().getMobile());
+        houseDto.setLandLordName(house.getLandlord().getAccount().getName());
+        houseDto.setLandLordDescribtion(house.getLandlord().getAccount().getDescription());
+        houseDto.setLandLordAccountId(house.getLandlord().getAccount().getId());
+        houseDto.setLandLordId(house.getLandlord().getId());
+        return houseDto;
     }
     /**
      * 查询该房子 租费的信息
@@ -139,7 +163,7 @@ public class HouseService {
     }
     private void buildPageVO(PageVO pageVO, PageImpl<House> page) {
         pageVO.setSize(page.getSize());
-        pageVO.setCount(page.getTotalPages());
+        pageVO.setCount((int) page.getTotalElements());
         List<House> list = page.getContent();
         List<HouseDto> houseDtos = new ArrayList<>();
         for (House house : list) {
@@ -150,6 +174,21 @@ public class HouseService {
             dto.setLandLordMobile(house.getLandlord().getAccount().getMobile());
             dto.setLandLordName(house.getLandlord().getAccount().getName());
             dto.setLandLordGender(house.getLandlord().getAccount().getGender());
+            if (CollectionUtils.isNotEmpty(house.getTenants())) {
+                Set<TenantDto> set = new HashSet<>();
+                for (Tenant tenant : house.getTenants()) {
+                    TenantDto tenantDto = new TenantDto();
+                    tenantDto.setTenantId(tenant.getId());
+                    tenantDto.setAccountId(tenant.getAccount().getId());
+                    tenantDto.setUserName(tenant.getAccount().getUserName());
+                    tenantDto.setName(tenant.getAccount().getName());
+                    tenantDto.setAge(tenant.getAccount().getAge());
+                    tenantDto.setGender(tenant.getAccount().getGender());
+                    tenantDto.setMobile(tenant.getAccount().getMobile());
+                    set.add(tenantDto);
+                }
+                dto.setTenantDtos(set);
+            }
             houseDtos.add(dto);
         }
         pageVO.setEntity(houseDtos);
@@ -195,31 +234,27 @@ public class HouseService {
                     predicates.add(cb.greaterThanOrEqualTo(root.get("createTime").as(Date.class), house.getCreateTime()));
                 }
                 //
-                if (house.getAddress() != null) {
-                    predicates.add(cb.like(root.get("address").as(String.class), "^" + house.getAddress() + "*"));
+                if (!StringUtils.isEmpty(house.getAddress())) {
+                    predicates.add(cb.like(root.get("address").as(String.class), "%"+house.getAddress()+"%"));
                 }
                 // 面积大于
                 if (house.getArea() != null) {
                     predicates.add(cb.greaterThanOrEqualTo(root.get("area").as(Integer.class), house.getArea()));
                 }
                 // 超想
-                if (house.getDirection() != null) {
+                if (!StringUtils.isEmpty(house.getDirection())) {
                     predicates.add(cb.equal(root.get("direction").as(String.class), house.getDirection()));
                 }
                 if (house.getPayMent() != null) {
                 }
-                if (house.getDecoration() != null) {
-                    predicates.add(cb.equal(root.get("decoration").as(String.class), house.getDecoration()));
-                }
+
                 if (house.getMinPrice() != null && house.getMaxPrice() != null) {
-                    predicates.add(cb.greaterThan(root.get("price").as(Integer.class), house.getMinPrice()));
-                    predicates.add(cb.lessThan(root.get("price").as(Integer.class), house.getMaxPrice()));
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("price").as(Integer.class), house.getMinPrice()));
+                    predicates.add(cb.lessThanOrEqualTo(root.get("price").as(Integer.class), house.getMaxPrice()));
                 }
-                if (house.getMinPrice() != null && house.getMaxPrice() == null) {
-                    predicates.add(cb.lessThan(root.get("price"), house.getMinPrice()));
-                }
+
                 if (house.getMaxPrice() != null && house.getMinPrice() == null) {
-                    predicates.add(cb.greaterThan(root.get("price"), house.getMaxPrice()));
+                    predicates.add(cb.lessThan(root.get("price"), house.getMaxPrice()));
                 }
                 Predicate[] pre = new Predicate[predicates.size()];
                 ;

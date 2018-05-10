@@ -17,6 +17,9 @@ public class House extends BaseEntity{
     @Lob
     @Column(columnDefinition="TEXT")
     private String address;
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String addressDetails;
     //几室几厅
     private String room;
     // 是否整租
@@ -43,7 +46,9 @@ public class House extends BaseEntity{
     private Integer roomArea;
     // 朝向
     private String direction;
-    private String status;
+    // 是否出租
+    @Column(columnDefinition = "tinyint default  0")
+    private Boolean status;
     //特色
     @Lob
     @Column(columnDefinition="TEXT")
@@ -64,6 +69,14 @@ public class House extends BaseEntity{
 
     public Integer getClick() {
         return click;
+    }
+
+    public String getAddressDetails() {
+        return addressDetails;
+    }
+
+    public void setAddressDetails(String addressDetails) {
+        this.addressDetails = addressDetails;
     }
 
     public void setClick(Integer click) {
@@ -183,11 +196,11 @@ public class House extends BaseEntity{
         this.direction = direction;
     }
 
-    public String getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 

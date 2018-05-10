@@ -24,9 +24,13 @@ public interface TenantDao extends BaseRepository<Tenant> {
      * @param pageable
      * @return
      */
-    List<Tenant> findTenantsByHouse(House house, Pageable pageable);
+    List<Tenant> findTenantsByHouse(House house);
 
     Tenant findTenantByAccount(Account account);
+
+    Tenant findTenantByAccount_UserName(String userName);
+
+    Tenant findTenantByAccount_Id(Integer accountId);
 
 
 

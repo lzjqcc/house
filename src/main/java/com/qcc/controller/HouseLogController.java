@@ -22,7 +22,7 @@ public class HouseLogController {
     @Autowired
     private TenantDao tenantDao;
     @RequestMapping(value = "/publishHouseLog",method = RequestMethod.POST)
-    public ResponseVO publishHouseLog(@RequestBody HouseLog houseLog) {
+    public ResponseVO publishHouseLog(@RequestBody HouseLogDto houseLog) {
         return houseLogService.publishHouseLog(houseLog);
     }
     @RequestMapping(value = "/sureHouseLog", method = RequestMethod.GET)

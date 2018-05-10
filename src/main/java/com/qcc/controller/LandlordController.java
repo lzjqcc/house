@@ -8,16 +8,13 @@ import com.qcc.service.RepairInfoService;
 import com.qcc.service.TenantService;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.PageVO;
-import com.qcc.utils.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/landlord")
@@ -44,6 +41,7 @@ public class LandlordController {
         return tenantService.findLandlordTenants(account.getId() ,pageVO);
     }
 
+
     /**
      * 房东查询自己发布的维修任务
      * @param currentPage
@@ -52,11 +50,16 @@ public class LandlordController {
      */
     @RequestMapping(value = "/findMySelfRepairInfos",method = RequestMethod.GET)
     public PageVO<List<RepairInfoDto>> findMySelfRepairInfo(@RequestParam("currentPage")Integer currentPage,
-                                                            @RequestParam("size") Integer size,
-                                                            @RequestParam("status") Integer status) {
+                                                            @RequestParam("size") Integer size) {
         PageVO pageVO = new PageVO();
+        if (currentPage <=0) {
+            currentPage = 1;
+        }
+        if (size <=0) {
+            size = 5;
+        }
         pageVO.setCurrentPage(currentPage);
         pageVO.setSize(size);
-        return repairInfoService.findRepairInfoByLandlord(CommUtils.getCurrentAccount(), pageVO, status);
+        return repairInfoService.findRepairInfos(CommUtils.getCurrentAccount(), pageVO);
     }
 }

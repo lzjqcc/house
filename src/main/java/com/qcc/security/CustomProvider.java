@@ -19,12 +19,13 @@ public class CustomProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Authentication cache = SecurityContextHolder.getContext().getAuthentication();
-        if (cache != null && authentication instanceof AccountToken && cache instanceof AccountToken) {
-            return cache;
-        }
         String userName = (String) authentication.getPrincipal();
         String password  = (String) authentication.getCredentials();
+        Authentication cache = SecurityContextHolder.getContext().getAuthentication();
+        if (cache != null && authentication instanceof AccountToken && cache instanceof AccountToken) {
+            if (((AccountToken) cache).getAccount().getUserName().equals(userName) && ((AccountToken) cache).getAccount().getPassword().equals(password))
+            return cache;
+        }
         return userDetailsService.loadAccount(userName, password);
 
     }

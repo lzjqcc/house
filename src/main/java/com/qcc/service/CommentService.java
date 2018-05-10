@@ -8,16 +8,15 @@ import com.qcc.domain.Account;
 import com.qcc.domain.Comment;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.Constant;
-import com.qcc.utils.PageVO;
 import com.qcc.utils.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingByConcurrent;
 import static java.util.stream.Collectors.partitioningBy;
@@ -26,6 +25,7 @@ import static java.util.stream.Collectors.partitioningBy;
 public class CommentService {
     @Autowired
     CommentDao commentDao;
+    @Autowired
     AccountDao accountDao;
     /**
      * 提交评论
@@ -34,7 +34,7 @@ public class CommentService {
      * @return
      */
     public ResponseVO pushComment(Account currentAccount, CommentDto commentDto) {
-        if (StringUtils.isEmpty(commentDto.getConversation()) || commentDto.getToAccountId() == null || commentDto.getHouseId() == null) {
+        if (StringUtils.isEmpty(commentDto.getConversation())  || commentDto.getToAccountId() == null) {
             return CommUtils.buildReponseVo(false, Constant.OPERAT_FAIL, null);
         }
         Account toAccount = accountDao.findOne(commentDto.getToAccountId());
@@ -46,18 +46,21 @@ public class CommentService {
         if (commentDto.getReplayId() == null) {
             comment.setReplayId(0);
         }
-        comment.setHouseId(commentDto.getHouseId());
+        if (commentDto.getScore() == null) {
+            comment.setScore(0);
+        }
+        commentDao.save(comment);
         return CommUtils.buildReponseVo(true, Constant.OPERAT_SUCCESS, null);
     }
 
     /**
      * 查看评论
-     * @param houseId
+     * @param landlordId
      * @return
      */
-    public ResponseVO<List<CommentDto>> pullComment(Integer houseId) {
+    public ResponseVO<List<CommentDto>> pullComment(Integer toAccountId) {
 
-        List<Comment> list = commentDao.findByHouseId(houseId);
+        List<Comment> list = commentDao.findByToAccount_Id(toAccountId, new Sort(Sort.Direction.DESC, "createTime"));
         Map<Boolean, List<Comment>> partitioned =
                 list.stream().collect(partitioningBy(e -> e.getReplayId() > 0));
         List<Comment> children = partitioned.get(true);
@@ -86,11 +89,15 @@ public class CommentService {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(comment.getId());
         commentDto.setConversation(comment.getConversation());
-        commentDto.setToAccountId(comment.getToAccount().getId());
-        commentDto.setToAccountName(comment.getToAccount().getName());
+        if (comment.getToAccount() != null) {
+            commentDto.setToAccountId(comment.getToAccount().getId());
+            commentDto.setToAccountName(comment.getToAccount().getName());
+        }
+        commentDto.setScore(comment.getScore());
         commentDto.setCreateTime(comment.getCreateTime());
         commentDto.setFromAccountName(comment.getFromAccount().getName());
         commentDto.setReplayId(comment.getReplayId());
+        commentDto.setLandlordId(comment.getLandlordId());
         return commentDto;
     }
 }

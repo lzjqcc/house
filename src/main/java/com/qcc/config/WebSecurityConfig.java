@@ -9,6 +9,7 @@ import com.qcc.security.CustomAuthenticationProcessingFilter;
 import com.qcc.security.CustomProvider;
 import com.qcc.security.CustomUserDetailsService;
 import com.qcc.utils.CommUtils;
+import com.qcc.utils.Constant;
 import com.qcc.utils.JsonUtils;
 import com.qcc.utils.ResponseVO;
 import net.minidev.json.JSONUtil;
@@ -19,6 +20,7 @@ import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,6 +36,7 @@ import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -58,8 +61,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
                 HttpServletRequest request = (HttpServletRequest) servletRequest;
-                System.out.println(request.getRemoteAddr());
-                System.out.println(request.getRemotePort());
                 System.out.println(                request.getRequestURI());
                 System.out.println(request.getRequestURL());
                 response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -79,10 +80,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }, ChannelProcessingFilter.class);
         http.csrf().disable();
         http.cors().disable();
+        http.logout().logoutUrl("/registerOut").logoutSuccessHandler(new LogoutSuccessHandler() {
+            @Override
+            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("utf-8");
+                    PrintWriter writer = response.getWriter();
+                    try {
+                        ResponseVO responseVO = new ResponseVO();
+                        responseVO.setMessage(Constant.OPERAT_SUCCESS);
+                        responseVO.setSuccess(true);
+                        writer.write(JsonUtils.toJson(responseVO));
+                    }catch (Exception o) {
+                        o.printStackTrace();
+                    }finally {
+                        CommUtils.closeStream(writer);
+                    }
+            }
+        });
         http.authorizeRequests().antMatchers("/login").permitAll();
-        http.authorizeRequests().antMatchers("image/**").permitAll();
         http.authorizeRequests().mvcMatchers("/account/update").authenticated();
-        http.authorizeRequests().mvcMatchers("/tenant/*", "/teant/**").access("hasAuthority('tenant')").accessDecisionManager(new AffirmativeBased(list));
+        http.authorizeRequests().mvcMatchers(HttpMethod.GET,"/tenant/*", "/teant/**" ).access("hasAuthority('tenant')").accessDecisionManager(new AffirmativeBased(list));
+        //http.authorizeRequests().mvcMatchers(HttpMethod.POST,"/tenant/*", "/teant/**" ).access("hasAuthority('enant')").accessDecisionManager(new AffirmativeBased(list));
+
+        http.authorizeRequests().mvcMatchers(HttpMethod.POST, "/image/uploadPicture").authenticated();
+        http.authorizeRequests().mvcMatchers(HttpMethod.GET, "/image/remove").authenticated();
         http.exceptionHandling().accessDeniedHandler(new AccessDeniedHandler() {
             @Override
             public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

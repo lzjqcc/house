@@ -12,5 +12,12 @@ import java.util.List;
 public interface RepairInfoDao extends BaseRepository<RepairInfo> {
     List<RepairInfo> findRepairInfosByStatusAndHouse(RepairInfoEnum status, House house);
 
-    Page<RepairInfo> findRepairInfosByLandlord_AccountAndStatus(Account account, Integer status, Pageable pageable);
+    Page<RepairInfo> findRepairInfosByLandlord_Account_Id(Integer accountId, Pageable pageable);
+
+    Page<RepairInfo> findRepairInfosByTenant_Account(Account account, Pageable pageable);
+
+    Page<RepairInfo> findRepairInfosByStatus(Integer status, Pageable pageable);
+
+    Page<RepairInfo> findRepairInfosByRepairman_Account(Account account, Pageable pageable);
 }
+

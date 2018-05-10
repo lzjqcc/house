@@ -7,31 +7,38 @@ import java.util.Date;
 @Entity
 @Table(name = "tb_comment")
 public class Comment extends BaseEntity{
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = Account.class)
+    @ManyToOne(cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY,targetEntity = Account.class)
     @JoinColumn(name = "current_account_id")
     private Account currentAccount;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = Account.class)
+    @ManyToOne(cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY,targetEntity = Account.class)
     @JoinColumn(name = "from_account_id")
     private Account fromAccount;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY,targetEntity = Account.class)
+    @ManyToOne(cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY,targetEntity = Account.class)
     @JoinColumn(name = "to_account_id")
     private Account toAccount;
     // 评论
     private String conversation;
+    private Integer score;
     /**
      * 回复哪个评论，0为直接评论
      */
     private Integer replayId;
-    private Integer houseId;
-
-    public Integer getHouseId() {
-        return houseId;
+    private Integer landlordId;
+    public Integer getScore() {
+        return score;
     }
 
-    public void setHouseId(Integer houseId) {
-        this.houseId = houseId;
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
+    public Integer getLandlordId() {
+        return landlordId;
+    }
+
+    public void setLandlordId(Integer landlordId) {
+        this.landlordId = landlordId;
+    }
 
     public Integer getReplayId() {
         return replayId;

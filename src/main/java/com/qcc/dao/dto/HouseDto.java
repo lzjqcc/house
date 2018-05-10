@@ -1,7 +1,9 @@
 package com.qcc.dao.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.qcc.domain.Image;
 import com.qcc.domain.Landlord;
+import com.qcc.domain.Tenant;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Column;
@@ -9,16 +11,30 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 public class HouseDto implements Serializable {
     private static final long serialVersionUID = -545092772283313660L;
     private Integer id;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+    @JsonFormat(pattern ="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     private String description;
     private String address;
+    private String addressDetails;
+    private Integer price;
     private Integer maxPrice;
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
     private Integer minPrice;
     //几室几厅
     private String room;
@@ -38,16 +54,42 @@ public class HouseDto implements Serializable {
     private Integer roomArea;
     // 朝向
     private String direction;
-    private String status;
+    private Boolean status;
     //特色
     private String characteristic;
     private Set<Image> images;
+    private Integer landLordAccountId;
     private Integer landLordId;
     private String landLordName;
     private String landLordMobile;
     private Boolean landLordGender;
     private String landLordDescribtion;
     private Integer landLordAge;
+    private Set<TenantDto> tenantDtos;
+
+    public Integer getLandLordAccountId() {
+        return landLordAccountId;
+    }
+
+    public void setLandLordAccountId(Integer landLordAccountId) {
+        this.landLordAccountId = landLordAccountId;
+    }
+
+    public Set<TenantDto> getTenantDtos() {
+        return tenantDtos;
+    }
+
+    public void setTenantDtos(Set<TenantDto> tenantDtos) {
+        this.tenantDtos = tenantDtos;
+    }
+
+    public String getAddressDetails() {
+        return addressDetails;
+    }
+
+    public void setAddressDetails(String addressDetails) {
+        this.addressDetails = addressDetails;
+    }
 
     public Integer getMaxPrice() {
         return maxPrice;
@@ -225,11 +267,11 @@ public class HouseDto implements Serializable {
         this.direction = direction;
     }
 
-    public String getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 

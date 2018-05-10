@@ -1,9 +1,6 @@
 package com.qcc.service;
 
-import com.qcc.dao.HouseDao;
-import com.qcc.dao.HouseLogDao;
-import com.qcc.dao.HouseLogOrderDao;
-import com.qcc.dao.HouseOrderDao;
+import com.qcc.dao.*;
 import com.qcc.dao.dto.HouseLogDto;
 import com.qcc.domain.*;
 import com.qcc.utils.CommUtils;
@@ -31,6 +28,8 @@ public class HouseLogService {
     private HouseOrderDao houseOrderDao;
     @Autowired
     private HouseLogOrderDao houseLogOrderDao;
+    @Autowired
+    private TenantDao tenantDao;
     /**
      * 房东发布租费信息
      * houseLog中house --》houseId不能为null
@@ -38,13 +37,17 @@ public class HouseLogService {
      * @param houseLog
      * @return
      */
-    public ResponseVO<HouseLogDto> publishHouseLog(HouseLog houseLog) {
-        if (houseLog.getHouse() == null || houseLog.getHouse().getId() == null || houseLog.getTenant() ==null || houseLog.getTenant().getId() == null ) {
+    public ResponseVO<HouseLogDto> publishHouseLog(HouseLogDto houseLog) {
+        if (houseLog == null || houseLog.getHouseId() == null || houseLog.getTenantId() ==null  ) {
             return CommUtils.buildReponseVo(false, "houseId || tenantId == null", null);
         }
-        House house = houseDao.findOne(houseLog.getHouse().getId());
-        houseLog.setHouse(house);
-        houseLogDao.save(houseLog);
+        HouseLog houseLog1 = new HouseLog();
+        BeanUtils.copyProperties(houseLog, houseLog1);
+        House house = houseDao.findOne(houseLog.getHouseId());
+        houseLog1.setSure(false);
+        houseLog1.setTenant(tenantDao.findOne(houseLog.getTenantId()));
+        houseLog1.setHouse(house);
+        houseLogDao.save(houseLog1);
         return CommUtils.buildReponseVo(true,"操作成功", null);
     }
 

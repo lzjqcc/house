@@ -19,6 +19,24 @@ public class HouseLogDto implements Serializable{
     // 租客是否确认
     private Boolean sure;
     private String houseName;
+    private Integer houseId;
+    private Integer tenantId;
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public Integer getHouseId() {
+        return houseId;
+    }
+
+    public void setHouseId(Integer houseId) {
+        this.houseId = houseId;
+    }
 
     public String getHouseName() {
         return houseName;

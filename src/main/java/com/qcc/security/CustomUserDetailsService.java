@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService{
         if (account == null) {
             throw new UsernameNotFoundException("用户名或密码错误");
         }
-        AccountToken token = new AccountToken(account.getUserName(), account.getPassword(), Lists.newArrayList(new SimpleGrantedAuthority(account.getRole().value)));
+        AccountToken token = new AccountToken(account.getUserName(), account.getPassword(), Lists.newArrayList(new SimpleGrantedAuthority(account.getRole().description)));
         token.setAccount(account);
        return token;
     }

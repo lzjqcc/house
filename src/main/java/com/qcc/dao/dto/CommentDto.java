@@ -13,11 +13,12 @@ public class CommentDto implements Serializable {
     private String fromAccountName;
     private String toAccountName;
     private Integer toAccountId;
+    private Integer score;
     /**
      * 回复哪个评论
      */
     private Integer replayId;
-    private Integer houseId;
+    private Integer landlordId;
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private List<CommentDto> children;
 
@@ -29,12 +30,12 @@ public class CommentDto implements Serializable {
         this.children = children;
     }
 
-    public Integer getHouseId() {
-        return houseId;
+    public Integer getLandlordId() {
+        return landlordId;
     }
 
-    public void setHouseId(Integer houseId) {
-        this.houseId = houseId;
+    public void setLandlordId(Integer landlordId) {
+        this.landlordId = landlordId;
     }
 
     public Integer getReplayId() {
@@ -84,6 +85,14 @@ public class CommentDto implements Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public void setId(Integer id) {

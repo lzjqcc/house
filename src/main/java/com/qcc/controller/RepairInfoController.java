@@ -11,6 +11,7 @@ import com.qcc.utils.CacheMap;
 import com.qcc.utils.CommUtils;
 import com.qcc.utils.PageVO;
 import com.qcc.utils.ResponseVO;
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class RepairInfoController {
         }
         return repairInfoService.pubilshRepairInfo(CommUtils.getCurrentAccount(), dto);
     }
-    @RequestMapping(value = "updateRepair", method = RequestMethod.GET)
+    @RequestMapping(value = "updateRepairInfo", method = RequestMethod.GET)
     public ResponseVO updateRepairInfo(@RequestParam("repairInfoId")Integer repairInfoId,
                                        @RequestParam("status")Integer status) {
         Repairman repairman = repairmanService.findRepairman(CommUtils.getCurrentAccount());
@@ -54,12 +55,13 @@ public class RepairInfoController {
      * @param size
      * @return
      */
-    @RequestMapping(value = "findRepairInfos",method = RequestMethod.POST)
-    public PageVO findRepairInfo(@RequestBody RepairInfoDto dto, @RequestParam("orderBy")String orderBy,
+    @RequestMapping(value = "findRepairInfos",method = RequestMethod.GET)
+    public PageVO findRepairInfo( @RequestParam(value = "orderBy",required = false)String orderBy,
                                  @RequestParam("currentPage")Integer currentPage,@RequestParam("size")Integer size) {
         PageVO<List<RepairInfoDto>> pageVO = new PageVO<>();
         pageVO.setCurrentPage(currentPage);
         pageVO.setSize(size);
+        RepairInfoDto dto = new RepairInfoDto();
         return repairInfoService.findRepairInfo(dto, pageVO, orderBy);
     }
 

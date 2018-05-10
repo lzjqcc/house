@@ -41,8 +41,9 @@ public class HouseController {
     public ResponseVO<HouseDto> clickHouse(Integer houseId) {
         return houseService.clickHouse(houseId);
     }
+    @RequestMapping(value = "/bastHouse")
     public ResponseVO<List<HouseDto>> findBastHouse() {
-        return null;
+        return houseService.findBastHouse();
     }
     /**
      * 根据条件组合来查询房子
@@ -111,11 +112,8 @@ public class HouseController {
      * @return
      */
     @RequestMapping(value = "/findHouseTenants", method = RequestMethod.GET)
-    public ResponseVO<Map<Integer, TenantDto>> findHouseTenants(@RequestParam("houseId") Integer houseId,
-                                                                @RequestParam("currentPage") Integer currentPage,
-                                                                @RequestParam("size") Integer size) {
-        PageRequest request = new PageRequest(currentPage - 1, size);
-        return tenantService.findHouseTenants(houseId, request);
+    public ResponseVO<Map<Integer, TenantDto>> findHouseTenants(@RequestParam("houseId") Integer houseId) {
+        return tenantService.findHouseTenants(houseId);
     }
 
     /**

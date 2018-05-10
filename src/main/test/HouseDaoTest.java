@@ -1,5 +1,6 @@
 import com.qcc.Application;
 import com.qcc.annotation.Cache;
+import com.qcc.controller.ImageController;
 import com.qcc.dao.dto.HouseDto;
 import com.qcc.domain.Account;
 import com.qcc.domain.House;
@@ -30,15 +31,20 @@ public class HouseDaoTest {
     @Autowired
     HouseLogService houseLogService;
     @Cache(space = "image")
-    CacheMap<List<String>> cacheMap;
+    CacheMap<List<ImageController.ImageFile>> cacheMap;
     @Test
     public void save() {
         Account account = new Account();
         account.setId(1);
         House house = new House();
         house.setAddress("上饶市余干县");
-        cacheMap.put(account.getId()+"", Lists.newArrayList("2/a.jpg","2/b.jpg"));
-        houseService.publishHouse(house, account);
+        ImageController.ImageFile imageFile = new ImageController.ImageFile();
+        imageFile.setUrl("/a/a/a/a/");
+        ImageController.ImageFile imageFile1 = new ImageController.ImageFile();
+        imageFile1.setUrl("/b/b/b/b/b");
+        cacheMap.put(account.getId()+"", Lists.newArrayList(imageFile, imageFile1));
+        int i = 0;
+
     }
     @Test
     public void select() {
@@ -46,6 +52,7 @@ public class HouseDaoTest {
         PageVO pageVO = new PageVO();
         pageVO.setCurrentPage(1);
         pageVO.setSize(10);
+        houseDto.setAddress("西湖区");
         PageVO<List<HouseDto>> pageVO1 = houseService.findHouses(houseDto, pageVO);
         System.out.println(pageVO1.getEntity().size());
     }

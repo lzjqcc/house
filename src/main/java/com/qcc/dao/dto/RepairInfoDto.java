@@ -1,5 +1,7 @@
 package com.qcc.dao.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -7,27 +9,29 @@ import java.util.List;
 public class RepairInfoDto implements Serializable {
     private static final long serialVersionUID = 920008929796281311L;
     // 确定维修时间
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date repairTime;
     private Integer repairPrice;
     // 查询条件是否大于 repairPrice
     private Boolean gtPrice;
     private Integer id;
     private String describtion;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     private String landlordName;
     private Integer landlordId;
     private String houseAddress;
-    private String landlordMobile;
+    private String mobile;
     private String repairThing;
     private List<String> imagesURL;
-    private Integer houseId;
+    private String status;
 
-    public Integer getHouseId() {
-        return houseId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setHouseId(Integer houseId) {
-        this.houseId = houseId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Date getRepairTime() {
@@ -102,12 +106,12 @@ public class RepairInfoDto implements Serializable {
         this.houseAddress = houseAddress;
     }
 
-    public String getLandlordMobile() {
-        return landlordMobile;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setLandlordMobile(String landlordMobile) {
-        this.landlordMobile = landlordMobile;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public String getRepairThing() {
@@ -124,6 +128,13 @@ public class RepairInfoDto implements Serializable {
 
     public void setImagesURL(List<String> imagesURL) {
         this.imagesURL = imagesURL;
+    }
+    public static void main(String[] args) {
+        RepairInfoDto repairInfoDto = new RepairInfoDto();
+        RepairInfoDto dto = new RepairInfoDto();
+        System.out.println(repairInfoDto.equals(dto));
+        System.out.println(repairInfoDto.hashCode());
+
     }
 }
 

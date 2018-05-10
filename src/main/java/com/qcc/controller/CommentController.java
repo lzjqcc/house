@@ -17,7 +17,7 @@ public class CommentController {
         return commentService.pushComment(CommUtils.getCurrentAccount(), commentDto);
     }
     @GetMapping(value = "/pullComment")
-    public ResponseVO pullComment(Integer houseId) {
-        return commentService.pullComment(houseId);
+    public ResponseVO pullComment(Integer toAccountId) {
+        return commentService.pullComment(toAccountId);
     }
 }
